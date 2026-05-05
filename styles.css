@@ -1,0 +1,183 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7fa;
+  color: #1b1f24;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #0a2f57;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+}
+
+.brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.lang-btn {
+  border: 1px solid #fff;
+  background: transparent;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.hero {
+  min-height: 48vh;
+  background: url("https://images.unsplash.com/photo-1465447142348-e9952c393450?auto=format&fit=crop&w=1600&q=80")
+    center/cover no-repeat;
+  display: grid;
+  place-items: center;
+}
+
+.hero-overlay {
+  background: rgba(0, 0, 0, 0.52);
+  color: #fff;
+  text-align: center;
+  padding: 32px 24px;
+  border-radius: 10px;
+  max-width: 760px;
+}
+
+.container {
+  width: min(1000px, 92%);
+  margin: 28px auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+  margin-top: 0;
+  color: #0a2f57;
+}
+
+.services ul {
+  margin: 0;
+  padding-inline-start: 20px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.gallery-grid img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.cta,
+.source-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #0a2f57;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.cta {
+  background: #0a2f57;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+}
+
+.cookie-banner {
+  position: fixed;
+  bottom: 16px;
+  inset-inline: 16px;
+  background: #132f4c;
+  color: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 30;
+}
+
+.cookie-banner button {
+  border: none;
+  background: #ffd166;
+  color: #222;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 40;
+}
+
+.popup-card {
+  width: min(420px, 92%);
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 10px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+#leadForm {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+#leadForm input,
+#leadForm button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccd2da;
+}
+
+#leadForm button {
+  background: #0a2f57;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .hero-overlay {
+    margin: 0 12px;
+  }
+}

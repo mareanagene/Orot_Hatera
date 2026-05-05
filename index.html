@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>אורות הטירה | קבלני תשתיות ותאורה</title>
+  <meta name="description" content="אורות הטירה - חברה לעבודות תשתית ותאורת כבישים.">
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">אורות הטירה</div>
+    <button id="langToggle" class="lang-btn" aria-label="Switch language">EN</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-overlay">
+        <h1 data-i18n="heroTitle">אורות הטירה</h1>
+        <p data-i18n="heroSubtitle">חברת קבלנות ותשתיות לתאורת כבישים</p>
+      </div>
+    </section>
+
+    <section class="container about">
+      <h2 data-i18n="aboutTitle">מי אנחנו</h2>
+      <p data-i18n="aboutText">
+        אורות הטירה היא חברה המתמחה בעבודות תשתית ותאורת כבישים.
+        מייסד החברה הוא ג'ורג' זינאתי.
+      </p>
+      <a class="source-link" target="_blank" rel="noopener noreferrer"
+        href="https://www.dunsguide.co.il/Ce77c34bf47dc5841ef4279548e3ceb30_%D7%A7%D7%91%D7%9C%D7%A0%D7%99_%D7%A2%D7%91%D7%95%D7%93%D7%95%D7%AA_%D7%AA%D7%90%D7%95%D7%A8%D7%94/%D7%90%D7%95%D7%A8%D7%95%D7%AA_%D7%94%D7%98%D7%99%D7%A8%D7%94_%D7%91%D7%99%D7%A6%D7%95%D7%A2_1998/"
+        data-i18n="sourceLink">למידע נוסף על החברה</a>
+    </section>
+
+    <section class="container services">
+      <h2 data-i18n="servicesTitle">שירותי החברה</h2>
+      <ul>
+        <li data-i18n="service1">תשתיות תאורה לכבישים</li>
+        <li data-i18n="service2">ביצוע והתקנת מערכות תאורה</li>
+        <li data-i18n="service3">פרויקטים עירוניים ובינעירוניים</li>
+      </ul>
+    </section>
+
+    <section class="container gallery">
+      <h2 data-i18n="galleryTitle">גלריית פרויקטים</h2>
+      <div class="gallery-grid">
+        <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=900&q=80" alt="תאורת כביש עירונית">
+        <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1f?auto=format&fit=crop&w=900&q=80" alt="עבודות תשתית בכביש">
+        <img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=900&q=80" alt="תאורת רחוב בלילה">
+      </div>
+    </section>
+
+    <section class="container contact">
+      <h2 data-i18n="contactTitle">יצירת קשר</h2>
+      <p data-i18n="contactText">מעוניינים בפרויקט? נשמח לעזור.</p>
+      <a class="cta" href="mailto:info@orot-hatira.co.il" data-i18n="contactBtn">שלחו לנו מייל</a>
+    </section>
+  </main>
+
+  <div id="cookieBanner" class="cookie-banner hidden" role="dialog" aria-live="polite">
+    <p data-i18n="cookieText">האתר משתמש בקובצי Cookies לשיפור חוויית הגלישה.</p>
+    <button id="acceptCookies" data-i18n="cookieBtn">מאשר/ת</button>
+  </div>
+
+  <div id="miniPopup" class="popup hidden" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+    <div class="popup-card">
+      <button id="closePopup" class="close-btn" aria-label="Close popup">×</button>
+      <h3 id="popupTitle" data-i18n="popupTitle">רוצים שנחזור אליכם?</h3>
+      <p data-i18n="popupText">השאירו אימייל ונשלח לכם מידע נוסף.</p>
+      <form id="leadForm">
+        <label for="emailInput" data-i18n="emailLabel">האימייל שלכם</label>
+        <input id="emailInput" name="email" type="email" required placeholder="name@example.com">
+        <button type="submit" data-i18n="popupBtn">שליחה</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
