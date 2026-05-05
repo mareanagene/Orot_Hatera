@@ -1,0 +1,148 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #f4f7fb;
+  color: #132034;
+  font-family: "Heebo", Arial, sans-serif;
+}
+.wrap {
+  width: min(1100px, 94%);
+  margin: 24px auto;
+}
+h1 { margin-bottom: 8px; }
+.lead { margin-top: 0; color: #425466; }
+.hint { margin-top: 0; color: #5b6b7f; }
+.card {
+  background: #fff;
+  border: 1px solid #e5ebf5;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+button, select, input[type="file"] {
+  font: inherit;
+}
+button {
+  border: 1px solid #0a2f57;
+  background: #0a2f57;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+textarea {
+  width: 100%;
+  min-height: 110px;
+  border: 1px solid #ccd6e6;
+  border-radius: 10px;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  direction: rtl;
+}
+.status {
+  margin-top: 8px;
+  font-weight: 700;
+  min-height: 20px;
+}
+input[type="text"],
+select {
+  width: 100%;
+  border: 1px solid #ccd6e6;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+  background: #fff;
+}
+label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+.form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+.full {
+  grid-column: 1 / -1;
+}
+.preview {
+  border: 1px solid #dfe7f4;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fbfdff;
+}
+.preview h3 {
+  margin: 0 0 6px;
+  color: #0a2f57;
+}
+.preview-highlight {
+  border: 1px solid #e6c874;
+  background: #fff9e8;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0;
+}
+.preview-highlight h4 {
+  margin: 0 0 4px;
+  color: #775100;
+}
+.preview-highlight p {
+  margin: 0;
+}
+.preview-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.preview-grid p {
+  margin: 6px 0 0;
+}
+.dynamic-list {
+  display: grid;
+  gap: 10px;
+}
+.item-card {
+  border: 1px solid #dfe7f4;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fff;
+}
+.thumb-row {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.thumb-row img {
+  width: 92px;
+  height: 62px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #d3deef;
+}
+.thumb-row a {
+  color: #0a2f57;
+  font-weight: 700;
+}
+.item-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.danger {
+  background: #932020;
+  border-color: #932020;
+}
+pre {
+  background: #0e1f33;
+  color: #d8e8ff;
+  border-radius: 10px;
+  padding: 12px;
+  white-space: pre-wrap;
+  margin: 0;
+}

@@ -1,0 +1,76 @@
+{
+  "heroTitle": "Orot Hatira",
+  "heroSubtitle": "Infrastructure and road lighting contractors",
+  "heroBtnGallery": "View projects",
+  "heroBtnEmail": "Email us",
+  "navAbout": "About",
+  "navServices": "Services",
+  "navGallery": "Gallery",
+  "navOwner": "Owner",
+  "navContact": "Contact",
+  "customTitle": "Dynamic Header From Admin",
+  "customText": "Use this area for an important message you want to show near the top of the website.",
+  "aboutTitle": "About The Company",
+  "aboutLead": "Orot Hatira provides solutions for road lighting and infrastructure.",
+  "aboutWhatTitle": "What we do",
+  "aboutWhatText": "Orot Hatira specializes in infrastructure works and road lighting projects. We support projects from planning to the installation of lighting systems along roads and in urban areas.",
+  "aboutFocusTitle": "What matters to us",
+  "aboutPoint1": "Safety, quality, and professionalism on-site",
+  "aboutPoint2": "Lighting solutions for road infrastructure",
+  "aboutPoint3": "On-time delivery and transparency throughout the process",
+  "aboutDataTitle": "Key details",
+  "dataCompany": "Company name",
+  "dataField": "Field of activity",
+  "dataFieldValue": "Road lighting infrastructure contracting",
+  "dataFounder": "Founder",
+  "dataFounderValue": "George Zinati",
+  "sourceLink": "More company information",
+  "servicesTitle": "Our Services",
+  "servicesLead": "From groundwork to an operational system.",
+  "servicesItems": [
+    {
+      "title": "Road lighting infrastructure",
+      "desc": "Infrastructure works and foundations for road lighting, including preparation for system deployment."
+    },
+    {
+      "title": "Installation of lighting systems",
+      "desc": "Installation, adjustments, and a structured process to bring lighting systems to service."
+    },
+    {
+      "title": "Urban & intercity projects",
+      "desc": "Project support for municipalities, contractors, and business partners."
+    }
+  ],
+  "galleryTitle": "Project Gallery",
+  "galleryLead": "Use the arrows or let the site slide automatically (right/left carousel).",
+  "galleryItems": [
+    {
+      "src": "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1200&q=80",
+      "alt": "Urban road lighting",
+      "caption": "Urban road lighting"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1200&q=80",
+      "alt": "Street lighting at night",
+      "caption": "Street lighting at night"
+    }
+  ],
+  "ownerTitle": "Ownership & Management",
+  "ownerSubTitle": "Who owns the company",
+  "ownerText1": "The company is managed and led by its founder, George Zinati.",
+  "ownerNameLabel": "Name",
+  "ownerNameValue": "George Zinati",
+  "ownerRoleLabel": "Role",
+  "ownerRoleValue": "Founder / Owner",
+  "ownerText2": "We focus on professional work, trust, and service every step of the way.",
+  "contactTitle": "Contact Us",
+  "contactText": "Planning a project? We would be happy to help.",
+  "contactBtn": "Send us an email",
+  "contactNote": "We will get back to you as soon as possible.",
+  "cookieText": "This website uses cookies to improve your browsing experience.",
+  "cookieBtn": "Accept",
+  "popupTitle": "Would you like us to contact you?",
+  "popupText": "Leave your email and we will send more details.",
+  "emailLabel": "Your email",
+  "popupBtn": "Submit"
+}

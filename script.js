@@ -1,120 +1,4 @@
-const translations = {
-  he: {
-    heroTitle: "אורות הטירה",
-    heroSubtitle: "חברת קבלנות ותשתיות לתאורת כבישים",
-    heroBtnGallery: "צפו בפרויקטים",
-    heroBtnEmail: "שלחו לנו מייל",
-    navAbout: "אודות",
-    navServices: "שירותים",
-    navGallery: "גלריה",
-    navOwner: "בעלים",
-    navContact: "צור קשר",
-    aboutTitle: "אודות החברה",
-    aboutLead: "אורות הטירה מספקת פתרונות לתאורת כבישים ותשתיות.",
-    aboutWhatTitle: "מה אנחנו עושים",
-    aboutWhatText:
-      "חברת אורות הטירה מתמחה בעבודות תשתית ותאורת כבישים. אנו מלווים פרויקטים מתחילת התכנון ועד ביצוע מערכות תאורה לאורך כבישים ואזורים עירוניים.",
-    aboutFocusTitle: "מה חשוב לנו בכל פרויקט",
-    aboutPoint1: "בטיחות, איכות ומקצועיות בביצוע",
-    aboutPoint2: "פתרונות תאורה לתשתיות כבישים",
-    aboutPoint3: "עמידה בלוחות זמנים ושקיפות בתהליך",
-    aboutDataTitle: "נתונים מרכזיים",
-    dataCompany: "שם החברה",
-    dataField: "תחום פעילות",
-    dataFieldValue: "קבלנות ותשתיות לתאורת כבישים",
-    dataFounder: "מייסד",
-    sourceLink: "למידע נוסף על החברה",
-    servicesTitle: "שירותי החברה",
-    servicesLead: "מהתשתית ועד המערכת המוכנה להפעלה.",
-    service1Title: "תשתיות תאורה לכבישים",
-    service1Desc: "עבודות תשתית ובסיסים לתשתיות תאורת כבישים, כולל הכנות לפריסת מערכות.",
-    service2Title: "ביצוע והתקנת מערכות תאורה",
-    service2Desc: "התקנה, התאמות ותהליך מסודר להעמדת מערכות תאורה לאורך כבישים ואזורים עירוניים.",
-    service3Title: "פרויקטים עירוניים ובינעירוניים",
-    service3Desc: "ליווי פרויקטים עבור רשויות, קבלנים ושותפים עסקיים.",
-    servicesTitle: "שירותי החברה",
-    galleryTitle: "גלריית פרויקטים",
-    galleryLead: "לחצו על החיצים או תנו לאתר לזוז לבד (קרוסלה ימינה ושמאלה).",
-    galleryCap1: "תאורת כביש עירונית",
-    galleryCap2: "עבודות תשתית בכביש",
-    galleryCap3: "תאורת רחוב בלילה",
-    ownerTitle: "בעלות וניהול",
-    ownerSubTitle: "מי הבעלים של החברה",
-    ownerText1: "החברה מנוהלת ומובלת ע\"י המייסד ג'ורג' זינאתי.",
-    ownerNameLabel: "שם",
-    ownerRoleLabel: "תפקיד",
-    ownerRoleValue: "מייסד / בעלים",
-    ownerText2: "אנו שמים דגש על עבודה מקצועית, אמינות ושירות לכל אורך הדרך.",
-    contactTitle: "יצירת קשר",
-    contactText: "מעוניינים בפרויקט? נשמח לעזור.",
-    contactBtn: "שלחו לנו מייל",
-    contactNote: "נחזור אליכם בהקדם האפשרי.",
-    cookieText: "האתר משתמש בקובצי Cookies לשיפור חוויית הגלישה.",
-    cookieBtn: "מאשר/ת",
-    popupTitle: "רוצים שנחזור אליכם?",
-    popupText: "השאירו אימייל ונשלח לכם מידע נוסף.",
-    emailLabel: "האימייל שלכם",
-    popupBtn: "שליחה",
-    sourceLink: "למידע נוסף על החברה"
-  },
-  en: {
-    heroTitle: "Orot Hatira",
-    heroSubtitle: "Infrastructure and road lighting contractors",
-    heroBtnGallery: "View projects",
-    heroBtnEmail: "Email us",
-    navAbout: "About",
-    navServices: "Services",
-    navGallery: "Gallery",
-    navOwner: "Owner",
-    navContact: "Contact",
-    aboutTitle: "Who We Are",
-    aboutLead: "Orot Hatira provides solutions for road lighting and infrastructure.",
-    aboutWhatTitle: "What we do",
-    aboutWhatText:
-      "Orot Hatira specializes in infrastructure works and road lighting projects. We support projects from planning to the installation of lighting systems along roads and in urban areas.",
-    aboutFocusTitle: "What matters to us",
-    aboutPoint1: "Safety, quality, and professionalism on-site",
-    aboutPoint2: "Lighting solutions for road infrastructure",
-    aboutPoint3: "On-time delivery and transparency throughout the process",
-    aboutDataTitle: "Key details",
-    dataCompany: "Company name",
-    dataField: "Field of activity",
-    dataFieldValue: "Road lighting infrastructure contracting",
-    dataFounder: "Founder",
-    sourceLink: "More company information",
-    servicesTitle: "Our Services",
-    servicesLead: "From groundwork to an operational system.",
-    service1Title: "Road lighting infrastructure",
-    service1Desc: "Infrastructure works and foundations for road lighting, including preparation for system deployment.",
-    service2Title: "Installation of lighting systems",
-    service2Desc: "Installation, adjustments, and a structured process to bring lighting systems to service.",
-    service3Title: "Urban & intercity projects",
-    service3Desc: "Project support for municipalities, contractors, and business partners.",
-    galleryTitle: "Project Gallery",
-    galleryLead: "Use the arrows or let the site slide automatically (right/left carousel).",
-    galleryCap1: "Urban road lighting",
-    galleryCap2: "Road infrastructure works",
-    galleryCap3: "Street lighting at night",
-    ownerTitle: "Ownership & Management",
-    ownerSubTitle: "Who owns the company",
-    ownerText1: "The company is managed and led by its founder, George Zinati.",
-    ownerNameLabel: "Name",
-    ownerRoleLabel: "Role",
-    ownerRoleValue: "Founder / Owner",
-    ownerText2: "We focus on professional work, trust, and service every step of the way.",
-    contactTitle: "Contact Us",
-    contactText: "Planning a project? We would be happy to help.",
-    contactBtn: "Send us an email",
-    contactNote: "We will get back to you as soon as possible.",
-    cookieText: "This website uses cookies to improve your browsing experience.",
-    cookieBtn: "Accept",
-    popupTitle: "Would you like us to contact you?",
-    popupText: "Leave your email and we will send more details.",
-    emailLabel: "Your email",
-    popupBtn: "Submit",
-    sourceLink: "More company information"
-  }
-};
+const translations = { he: {}, en: {} };
 
 const langToggleBtn = document.getElementById("langToggle");
 const cookieBanner = document.getElementById("cookieBanner");
@@ -126,6 +10,50 @@ const leadForm = document.getElementById("leadForm");
 const COOKIE_KEY = "orot_hatira_cookie_consent";
 const POPUP_KEY = "orot_hatira_popup_shown";
 const LANG_KEY = "orot_hatira_lang";
+let carouselCleanup = null;
+
+function currentLangMap() {
+  const lang = document.documentElement.lang === "en" ? "en" : "he";
+  return translations[lang];
+}
+
+function renderServices(lang) {
+  const container = document.getElementById("servicesCards");
+  if (!container) return;
+  const items = Array.isArray(translations[lang].servicesItems) ? translations[lang].servicesItems : [];
+  container.innerHTML = "";
+  items.forEach((item) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    const title = document.createElement("h3");
+    const desc = document.createElement("p");
+    title.textContent = item.title || "";
+    desc.textContent = item.desc || "";
+    card.appendChild(title);
+    card.appendChild(desc);
+    container.appendChild(card);
+  });
+}
+
+function renderGallery(lang) {
+  const track = document.getElementById("carouselTrack");
+  if (!track) return;
+  const items = Array.isArray(translations[lang].galleryItems) ? translations[lang].galleryItems : [];
+  track.innerHTML = "";
+  items.forEach((item) => {
+    const figure = document.createElement("figure");
+    figure.className = "carousel-slide";
+    const img = document.createElement("img");
+    const cap = document.createElement("figcaption");
+    img.src = item.src || "";
+    img.alt = item.alt || "";
+    cap.className = "carousel-caption";
+    cap.textContent = item.caption || "";
+    figure.appendChild(img);
+    figure.appendChild(cap);
+    track.appendChild(figure);
+  });
+}
 
 function setLanguage(lang) {
   const selected = lang === "en" ? "en" : "he";
@@ -136,10 +64,36 @@ function setLanguage(lang) {
 
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const key = element.getAttribute("data-i18n");
-    if (translations[selected][key]) {
-      element.textContent = translations[selected][key];
-    }
+    element.textContent = translations[selected][key] || "";
   });
+  renderServices(selected);
+  renderGallery(selected);
+  if (typeof carouselCleanup === "function") carouselCleanup();
+  carouselCleanup = initCarousel();
+}
+
+async function loadContentFiles() {
+  const mode = new URLSearchParams(window.location.search).get("mode");
+  const suffix = mode === "draft" ? ".draft" : "";
+  const languages = ["he", "en"];
+  let loadedCount = 0;
+  await Promise.all(
+    languages.map(async (lang) => {
+      const response = await fetch(`content/company-profile.${lang}${suffix}.json`, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`Failed loading content/company-profile.${lang}${suffix}.json`);
+      }
+      const data = await response.json();
+      if (!data || typeof data !== "object") {
+        throw new Error(`Invalid JSON in company-profile.${lang}${suffix}.json`);
+      }
+      translations[lang] = data;
+      loadedCount += 1;
+    })
+  );
+  if (loadedCount !== languages.length) {
+    throw new Error("Missing one or more JSON language files.");
+  }
 }
 
 function initCookies() {
@@ -185,23 +139,20 @@ leadForm.addEventListener("submit", (event) => {
   leadForm.reset();
 });
 
-const savedLang = localStorage.getItem(LANG_KEY) || "he";
-setLanguage(savedLang);
-initCookies();
-showMiniPopupWithDelay();
-
 function initCarousel() {
   const carousel = document.getElementById("galleryCarousel");
-  if (!carousel) return;
+  if (!carousel) return () => {};
 
   const track = document.getElementById("carouselTrack");
   const viewport = document.getElementById("carouselViewport");
+  if (!track || !viewport) return () => {};
   const slides = Array.from(track.querySelectorAll(".carousel-slide"));
-  if (!slides.length) return;
+  if (!slides.length) return () => {};
 
   const prevBtn = document.getElementById("galleryPrev");
   const nextBtn = document.getElementById("galleryNext");
   const dotsEl = document.getElementById("galleryDots");
+  if (dotsEl) dotsEl.innerHTML = "";
 
   let index = 0;
   let autoplayTimer = null;
@@ -252,44 +203,76 @@ function initCarousel() {
 
   const restartAutoplay = () => startAutoplay();
 
-  prevBtn?.addEventListener("click", () => {
+  const onPrev = () => {
     direction = -1;
     goTo(index - 1);
     restartAutoplay();
-  });
+  };
 
-  nextBtn?.addEventListener("click", () => {
+  const onNext = () => {
     direction = 1;
     goTo(index + 1);
     restartAutoplay();
-  });
+  };
+  prevBtn?.addEventListener("click", onPrev);
+  nextBtn?.addEventListener("click", onNext);
 
-  window.addEventListener("resize", () => updateTransform());
+  const onResize = () => updateTransform();
+  window.addEventListener("resize", onResize);
 
-  carousel.addEventListener("mouseenter", () => {
+  const onEnter = () => {
     paused = true;
-  });
-  carousel.addEventListener("mouseleave", () => {
+  };
+  const onLeave = () => {
     paused = false;
     restartAutoplay();
-  });
+  };
+  carousel.addEventListener("mouseenter", onEnter);
+  carousel.addEventListener("mouseleave", onLeave);
 
   carousel.tabIndex = 0;
-  carousel.addEventListener("keydown", (e) => {
+  const onKeyDown = (e) => {
     if (e.key === "ArrowLeft") {
+      e.preventDefault();
       direction = -1;
       goTo(index - 1);
+      restartAutoplay();
     }
     if (e.key === "ArrowRight") {
+      e.preventDefault();
       direction = 1;
       goTo(index + 1);
+      restartAutoplay();
     }
-  });
+  };
+  carousel.addEventListener("keydown", onKeyDown);
 
   createDots();
   updateDots();
   updateTransform();
   startAutoplay();
+  return () => {
+    if (autoplayTimer) window.clearInterval(autoplayTimer);
+    prevBtn?.removeEventListener("click", onPrev);
+    nextBtn?.removeEventListener("click", onNext);
+    window.removeEventListener("resize", onResize);
+    carousel.removeEventListener("mouseenter", onEnter);
+    carousel.removeEventListener("mouseleave", onLeave);
+    carousel.removeEventListener("keydown", onKeyDown);
+  };
 }
 
-initCarousel();
+async function initApp() {
+  try {
+    await loadContentFiles();
+    const savedLang = localStorage.getItem(LANG_KEY) || "he";
+    setLanguage(savedLang);
+    initCookies();
+    showMiniPopupWithDelay();
+  } catch (error) {
+    console.error(error);
+    alert("JSON content failed to load. Please check content/company-profile.he.json and content/company-profile.en.json");
+  }
+}
+
+initApp();

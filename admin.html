@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניהול תוכן | אורות הטירה</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="wrap">
+    <h1>כלי ניהול תוכן - אורות הטירה</h1>
+    <p class="lead">ניהול תוכן בצורה פשוטה: ממלאים שדות, שומרים, וזהו. לא צריך לדעת JSON.</p>
+
+    <section class="card">
+      <h2>1) בחירת שפה וטעינה</h2>
+      <p class="hint">לשמירה ישירה ל-JSON יש להפעיל: <code>python local_admin_server.py</code> (במקום http.server רגיל).</p>
+      <div class="row">
+        <label for="langSelect">שפה:</label>
+        <select id="langSelect">
+          <option value="he">עברית</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button id="loadFromSiteBtn">טען מהאתר</button>
+        <button id="pickProjectBtn">בחר תיקיית פרויקט</button>
+        <button id="loadDraftBtn">טען טיוטה</button>
+      </div>
+      <div id="status" class="status"></div>
+    </section>
+
+    <section class="card">
+      <h2>2) פרטי חברה</h2>
+      <p class="hint">כל שדה כאן משפיע ישירות על האזור המקביל באתר.</p>
+      <div class="form-grid">
+        <label>שם חברה<input id="f_heroTitle" type="text"></label>
+        <label>שורת פתיחה<input id="f_heroSubtitle" type="text"></label>
+        <label>כותרת חדשה (מקטע דינאמי)<input id="f_customTitle" type="text" placeholder="למשל: פרויקט חדש באזור הצפון"></label>
+        <label class="full">תוכן הכותרת החדשה<textarea id="f_customText" placeholder="כאן תכתוב מה תרצה שיופיע במקטע הדינאמי"></textarea></label>
+        <label>כותרת אודות<input id="f_aboutTitle" type="text"></label>
+        <label>תיאור קצר אודות<input id="f_aboutLead" type="text"></label>
+        <label class="full">מה אנחנו עושים<textarea id="f_aboutWhatText"></textarea></label>
+        <label>שם בעלים / מייסד<input id="f_ownerNameValue" type="text"></label>
+        <label>תחום פעילות<input id="f_dataFieldValue" type="text"></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3) פרטי יצירת קשר</h2>
+      <div class="form-grid">
+        <label>טקסט צור קשר<input id="f_contactText" type="text"></label>
+        <label>טקסט כפתור מייל<input id="f_contactBtn" type="text"></label>
+        <label>טקסט משלים<input id="f_contactNote" type="text"></label>
+        <label>טקסט חלון קופץ<input id="f_popupText" type="text"></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4) גלריה ותמונות</h2>
+      <p>תומך בכל כמות תמונות. אפשר להוסיף ולמחוק חופשי.</p>
+      <div class="actions">
+        <button id="pickImagesDirBtn">בדיקת חיבור לשרת שמירה</button>
+        <input id="imageInput" type="file" accept="image/*" multiple>
+        <button id="uploadImagesBtn">העלה תמונות</button>
+        <button id="addGalleryItemBtn">+ הוסף תמונה ידנית</button>
+      </div>
+      <div id="galleryList" class="dynamic-list"></div>
+      <p class="hint">בכל תמונה אפשר: נתיב, alt, וכיתוב. אחרי העלאה תראה גם תצוגה ממוזערת וקישור “פתח תמונה”.</p>
+      <pre id="uploadResult"></pre>
+    </section>
+
+    <section class="card">
+      <h2>5) תחומי שירות (כולל DEV/FARM וכל מה שתרצה)</h2>
+      <div class="actions">
+        <button id="addServiceItemBtn">+ הוסף תחום</button>
+      </div>
+      <div id="servicesList" class="dynamic-list"></div>
+    </section>
+
+    <section class="card">
+      <h2>6) תצוגה לפני שחרור</h2>
+      <div class="actions">
+        <button id="saveDraftBtn">שמור לקובץ JSON המקורי</button>
+        <button id="openPreviewBtn">שמור + פתח תצוגה</button>
+        <button id="sendApprovalMailBtn">שלח בקשת אישור למייל</button>
+      </div>
+      <div class="form-grid">
+        <label>מייל מאשר יחיד<input id="approverEmail" type="email" value="mareanagene8@gmail.com"></label>
+      </div>
+      <p class="hint">הלינק לתצוגה נשלח למייל דרך תוכנת המייל שלך (mailto).</p>
+    </section>
+
+    <section class="card">
+      <h2>7) פרסום מיידי</h2>
+      <div class="form-grid">
+        <label>מייל מאשר<input id="approvalEmailInput" type="email" placeholder="mareanagene8@gmail.com"></label>
+        <label>קוד אישור<input id="approvalCodeInput" type="password" placeholder="קוד אישור"></label>
+      </div>
+      <div class="actions">
+        <button id="approveBtn">בטל מנגנון אישור</button>
+        <button id="publishBtn">שמור/פרסם מיד</button>
+        <button id="downloadBtn">הורד JSON לגיבוי</button>
+      </div>
+      <p class="hint">אין צורך באישור. שמירה מתבצעת ישירות לקובץ JSON המקורי בתיקיית content.</p>
+    </section>
+
+    <section class="card">
+      <h2>תצוגה מקדימה חיה</h2>
+      <p class="hint">כך זה ייראה באתר (הדמיה מהירה מתוך מה שכתבת בטופס).</p>
+      <div class="preview">
+        <h3 id="p_heroTitle"></h3>
+        <p id="p_heroSubtitle"></p>
+        <div class="preview-highlight">
+          <h4 id="p_customTitle"></h4>
+          <p id="p_customText"></p>
+        </div>
+        <div class="preview-grid">
+          <div>
+            <strong>אודות</strong>
+            <p id="p_aboutLead"></p>
+          </div>
+          <div>
+            <strong>בעלים</strong>
+            <p id="p_ownerNameValue"></p>
+          </div>
+          <div>
+            <strong>צור קשר</strong>
+            <p id="p_contactText"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

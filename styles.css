@@ -124,6 +124,15 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+.custom-highlight {
+  border: 1px solid #e6c874;
+  background: linear-gradient(180deg, #fff9e8 0%, #ffffff 85%);
+}
+
+.custom-highlight h2 {
+  margin-bottom: 6px;
+}
+
 h2 {
   margin-top: 0;
   color: #0a2f57;
