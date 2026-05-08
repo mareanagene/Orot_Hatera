@@ -5,6 +5,7 @@ import json
 from urllib import request as urlrequest
 from urllib.error import URLError, HTTPError
 from uuid import uuid4
+import time
 
 import mysql.connector
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
@@ -67,6 +68,20 @@ TRANSLATE_API_URL = get_env("TRANSLATE_API_URL", "")
 TRANSLATE_API_KEY = get_env("TRANSLATE_API_KEY", "")
 TRANSLATE_API_MODEL = get_env("TRANSLATE_API_MODEL", "gpt-4o-mini")
 ALLOWED_UPLOAD_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+
+
+def debug_log(run_id: str, hypothesis_id: str, location: str, message: str, data: dict) -> None:
+    payload = {
+        "sessionId": "567fb0",
+        "runId": run_id,
+        "hypothesisId": hypothesis_id,
+        "location": location,
+        "message": message,
+        "data": data,
+        "timestamp": int(time.time() * 1000),
+    }
+    with open("debug-567fb0.log", "a", encoding="utf-8") as f:
+        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
 def get_connection():
@@ -504,6 +519,15 @@ def get_farm_cards(page_name: str, lang_code: str) -> list[dict]:
 
 
 def replace_farm_cards(page_name: str, lang_code: str, cards: list[dict]) -> None:
+    # region agent log
+    debug_log(
+        run_id="editor-save-pre",
+        hypothesis_id="H2",
+        location="app.py:replace_farm_cards",
+        message="Replacing farm cards",
+        data={"page_name": page_name, "lang_code": lang_code, "cards_count": len(cards)},
+    )
+    # endregion
     with closing(get_connection()) as conn:
         with closing(conn.cursor()) as cur:
             cur.execute("DELETE FROM farm_cards WHERE page_name = %s AND lang_code = %s", (page_name, lang_code))
@@ -727,6 +751,20 @@ def editor():
         lang_code = "he"
 
     if request.method == "POST":
+        # region agent log
+        debug_log(
+            run_id="editor-post",
+            hypothesis_id="H1",
+            location="app.py:editor",
+            message="Editor POST received",
+            data={
+                "action": request.form.get("action"),
+                "page_name": page_name,
+                "lang_code": lang_code,
+                "form_keys_count": len(list(request.form.keys())),
+            },
+        )
+        # endregion
         if request.form.get("action") == "translate_to_en":
             translate_page_content(page_name=page_name, source_lang="he", target_lang="en")
             message = "Hebrew page content translated and synced to English."
@@ -812,6 +850,19 @@ def editor():
                         "is_active": is_active,
                     }
                 )
+            # region agent log
+            debug_log(
+                run_id="editor-save-pre",
+                hypothesis_id="H3",
+                location="app.py:editor",
+                message="Built cards payload from form",
+                data={
+                    "declared_card_count": card_count,
+                    "payload_count": len(cards_payload),
+                    "card_types": [c.get("card_type", "") for c in cards_payload[:10]],
+                },
+            )
+            # endregion
             replace_farm_cards(page_name, lang_code, cards_payload)
             if auto_translate:
                 translated_cards = []
@@ -856,6 +907,15 @@ def editor():
 @editor_required
 def upload_image():
     file = request.files.get("image")
+    # region agent log
+    debug_log(
+        run_id="upload-image",
+        hypothesis_id="H4",
+        location="app.py:upload_image",
+        message="Upload endpoint hit",
+        data={"has_file": bool(file), "filename": (file.filename if file else "")},
+    )
+    # endregion
     if not file or not file.filename:
         return jsonify({"error": "No file uploaded"}), 400
     if not is_allowed_upload(file.filename):
