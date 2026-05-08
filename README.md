@@ -13,12 +13,19 @@ The system includes a public site, secure login, user management, and a visual C
   - Preview (editor-only, not saved)
   - Review (field-by-field changes)
   - Save to DB / Discard changes
+  - Per-block collapse / delete controls
+- Fast page creation from the editor (`+ New Page`)
 - Dynamic block system:
   - `farm` blocks
   - `text` blocks
   - `image` blocks
+  - `heading` blocks
+  - `divider / bar` blocks
 - Layout controls per block:
-  - row group, width, order, colors, image scale, caption
+  - row group, width, order, colors, image scale, image horizontal position, image roundness, caption
+- Image workflow:
+  - upload from local computer (not URL-only)
+  - URL input still supported
 - User authentication and session-based access
 - User management page (`/users`)
 - Bilingual support (`he` / `en`)
@@ -109,10 +116,14 @@ Open:
 
 1. Edit content/blocks in `/editor`
 2. Click **Preview (Editor only)** to see visual changes without DB save
-3. Click **Review** to inspect exact before/after field changes
+3. Click **Review** to inspect exact before/after field changes (field-level diff)
 4. Choose:
    - **Save DB** (publish to DB / official site)
    - **Discard Changes** (reset unsaved edits)
+
+Optional editor actions:
+- **Translate HE -> EN (Full Page)** to sync all text/blocks into English
+- **+ New Page** to create a new page namespace and start editing its content
 
 ---
 

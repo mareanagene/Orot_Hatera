@@ -4,10 +4,12 @@ from functools import wraps
 import json
 from urllib import request as urlrequest
 from urllib.error import URLError, HTTPError
+from uuid import uuid4
 
 import mysql.connector
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 
 def load_dotenv(path: str = ".env") -> None:
@@ -64,6 +66,7 @@ EDITABLE_SECTION_IDS = [
 TRANSLATE_API_URL = get_env("TRANSLATE_API_URL", "")
 TRANSLATE_API_KEY = get_env("TRANSLATE_API_KEY", "")
 TRANSLATE_API_MODEL = get_env("TRANSLATE_API_MODEL", "gpt-4o-mini")
+ALLOWED_UPLOAD_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 
 def get_connection():
@@ -134,6 +137,8 @@ def init_db() -> None:
                     sort_order INT NOT NULL DEFAULT 0,
                     image_url VARCHAR(500) NULL,
                     image_scale INT NOT NULL DEFAULT 100,
+                    image_x INT NOT NULL DEFAULT 0,
+                    image_radius INT NOT NULL DEFAULT 0,
                     caption VARCHAR(255) NULL,
                     is_active TINYINT(1) NOT NULL DEFAULT 1,
                     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -173,6 +178,32 @@ def init_db() -> None:
             has_row_group = cur.fetchone()[0] > 0
             if not has_row_group:
                 cur.execute("ALTER TABLE farm_cards ADD COLUMN row_group INT NOT NULL DEFAULT 1 AFTER sort_order")
+            cur.execute(
+                """
+                SELECT COUNT(*)
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s
+                  AND TABLE_NAME = 'farm_cards'
+                  AND COLUMN_NAME = 'image_x'
+                """,
+                (DB_CONFIG["database"],),
+            )
+            has_image_x = cur.fetchone()[0] > 0
+            if not has_image_x:
+                cur.execute("ALTER TABLE farm_cards ADD COLUMN image_x INT NOT NULL DEFAULT 0 AFTER image_scale")
+            cur.execute(
+                """
+                SELECT COUNT(*)
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s
+                  AND TABLE_NAME = 'farm_cards'
+                  AND COLUMN_NAME = 'image_radius'
+                """,
+                (DB_CONFIG["database"],),
+            )
+            has_image_radius = cur.fetchone()[0] > 0
+            if not has_image_radius:
+                cur.execute("ALTER TABLE farm_cards ADD COLUMN image_radius INT NOT NULL DEFAULT 0 AFTER image_x")
 
             cur.execute(
                 """
@@ -309,9 +340,9 @@ def init_db() -> None:
                 """
                 INSERT INTO farm_cards (
                     page_name, lang_code, card_key, card_type, title, body_text, bg_color, text_color,
-                    width_units, sort_order, row_group, image_url, image_scale, caption, is_active
+                    width_units, sort_order, row_group, image_url, image_scale, image_x, image_radius, caption, is_active
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON DUPLICATE KEY UPDATE
                   card_type = VALUES(card_type),
                   title = VALUES(title),
@@ -323,16 +354,18 @@ def init_db() -> None:
                   row_group = VALUES(row_group),
                   image_url = VALUES(image_url),
                   image_scale = VALUES(image_scale),
+                  image_x = VALUES(image_x),
+                  image_radius = VALUES(image_radius),
                   caption = VALUES(caption),
                   is_active = VALUES(is_active)
                 """,
                 [
-                    ("farm_1", "he", "contact", "farm", "צור קשר", "איש קשר\nחברה\n08-638-2777", "#223f69", "#f4f7fb", 1, 1, 1, None, 100, None, 1),
-                    ("farm_1", "he", "live", "farm", "נתונים בזמן אמת", "שם פרויקט\nפירוט פרויקט", "#3b4048", "#f4f7fb", 1, 2, 1, None, 100, None, 1),
-                    ("farm_1", "he", "projects", "farm", "פרויקטים אחרונים", "אין עדיין פריטים.", "#223f69", "#f4f7fb", 1, 3, 1, None, 100, None, 1),
-                    ("farm_1", "en", "contact", "farm", "Contact", "Contact Person\nCompany\n08-638-2777", "#223f69", "#f4f7fb", 1, 1, 1, None, 100, None, 1),
-                    ("farm_1", "en", "live", "farm", "Real-time Data", "Project Name\nProject Details", "#3b4048", "#f4f7fb", 1, 2, 1, None, 100, None, 1),
-                    ("farm_1", "en", "projects", "farm", "Recent Projects", "No items yet.", "#223f69", "#f4f7fb", 1, 3, 1, None, 100, None, 1),
+                    ("farm_1", "he", "contact", "farm", "צור קשר", "איש קשר\nחברה\n08-638-2777", "#223f69", "#f4f7fb", 1, 1, 1, None, 100, 0, 0, None, 1),
+                    ("farm_1", "he", "live", "farm", "נתונים בזמן אמת", "שם פרויקט\nפירוט פרויקט", "#3b4048", "#f4f7fb", 1, 2, 1, None, 100, 0, 0, None, 1),
+                    ("farm_1", "he", "projects", "farm", "פרויקטים אחרונים", "אין עדיין פריטים.", "#223f69", "#f4f7fb", 1, 3, 1, None, 100, 0, 0, None, 1),
+                    ("farm_1", "en", "contact", "farm", "Contact", "Contact Person\nCompany\n08-638-2777", "#223f69", "#f4f7fb", 1, 1, 1, None, 100, 0, 0, None, 1),
+                    ("farm_1", "en", "live", "farm", "Real-time Data", "Project Name\nProject Details", "#3b4048", "#f4f7fb", 1, 2, 1, None, 100, 0, 0, None, 1),
+                    ("farm_1", "en", "projects", "farm", "Recent Projects", "No items yet.", "#223f69", "#f4f7fb", 1, 3, 1, None, 100, 0, 0, None, 1),
                 ],
             )
             cur.execute("SELECT COUNT(*) FROM users")
@@ -460,7 +493,7 @@ def get_farm_cards(page_name: str, lang_code: str) -> list[dict]:
             cur.execute(
                 """
                 SELECT id, card_key, card_type, title, body_text, bg_color, text_color, width_units, sort_order, row_group,
-                       image_url, image_scale, caption, is_active
+                       image_url, image_scale, image_x, image_radius, caption, is_active
                 FROM farm_cards
                 WHERE page_name = %s AND lang_code = %s
                 ORDER BY row_group ASC, sort_order ASC, id ASC
@@ -479,9 +512,9 @@ def replace_farm_cards(page_name: str, lang_code: str, cards: list[dict]) -> Non
                     """
                     INSERT INTO farm_cards (
                         page_name, lang_code, card_key, card_type, title, body_text, bg_color, text_color,
-                        width_units, sort_order, row_group, image_url, image_scale, caption, is_active
+                        width_units, sort_order, row_group, image_url, image_scale, image_x, image_radius, caption, is_active
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,
                     (
                         page_name,
@@ -497,6 +530,8 @@ def replace_farm_cards(page_name: str, lang_code: str, cards: list[dict]) -> Non
                         card.get("row_group", 1),
                         card["image_url"] or None,
                         card["image_scale"],
+                        card.get("image_x", 0),
+                        card.get("image_radius", 0),
                         card["caption"] or None,
                         1 if card.get("is_active", True) else 0,
                     ),
@@ -580,6 +615,13 @@ def translate_page_content(page_name: str, source_lang: str, target_lang: str) -
             }
         )
     replace_farm_cards(page_name, target_lang, translated_cards)
+
+
+def is_allowed_upload(filename: str) -> bool:
+    if "." not in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1].lower()
+    return ext in ALLOWED_UPLOAD_EXTENSIONS
 
 
 @app.before_request
@@ -731,7 +773,7 @@ def editor():
             for i in range(card_count):
                 card_key = (request.form.get(f"card_key_{i}") or f"card_{i+1}").strip() or f"card_{i+1}"
                 card_type = (request.form.get(f"card_type_{i}") or "farm").strip().lower()
-                if card_type not in {"farm", "text", "image"}:
+                if card_type not in {"farm", "text", "image", "heading", "divider"}:
                     card_type = "farm"
                 title = (request.form.get(f"card_title_{i}") or "").strip()
                 body_text = (request.form.get(f"card_body_{i}") or "").strip()
@@ -745,6 +787,10 @@ def editor():
                 image_url = (request.form.get(f"card_image_{i}") or "").strip()
                 image_scale = int((request.form.get(f"card_scale_{i}") or "100").strip() or "100")
                 image_scale = max(30, min(200, image_scale))
+                image_x = int((request.form.get(f"card_x_{i}") or "0").strip() or "0")
+                image_x = max(-100, min(100, image_x))
+                image_radius = int((request.form.get(f"card_radius_{i}") or "0").strip() or "0")
+                image_radius = max(0, min(50, image_radius))
                 caption = (request.form.get(f"card_caption_{i}") or "").strip()
                 is_active = request.form.get(f"card_active_{i}") == "on"
                 cards_payload.append(
@@ -760,6 +806,8 @@ def editor():
                         "row_group": row_group,
                         "image_url": image_url,
                         "image_scale": image_scale,
+                        "image_x": image_x,
+                        "image_radius": image_radius,
                         "caption": caption,
                         "is_active": is_active,
                     }
@@ -802,6 +850,24 @@ def editor():
         lang_code=lang_code,
         farm_cards=farm_cards,
     )
+
+
+@app.post("/api/upload-image")
+@editor_required
+def upload_image():
+    file = request.files.get("image")
+    if not file or not file.filename:
+        return jsonify({"error": "No file uploaded"}), 400
+    if not is_allowed_upload(file.filename):
+        return jsonify({"error": "Unsupported file type"}), 400
+
+    uploads_dir = os.path.join(app.root_path, "static", "uploads")
+    os.makedirs(uploads_dir, exist_ok=True)
+    safe_name = secure_filename(file.filename)
+    unique_name = f"{uuid4().hex}_{safe_name}"
+    full_path = os.path.join(uploads_dir, unique_name)
+    file.save(full_path)
+    return jsonify({"url": f"/static/uploads/{unique_name}"})
 
 
 @app.get("/api/items")
