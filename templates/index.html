@@ -58,7 +58,7 @@
         <section class="cards-grid">
         {% endif %}
           <article
-            class="{% if card.card_type != 'text' %}panel {% endif %}dynamic-card width-{{ card.width_units }} type-{{ card.card_type }}"
+            class="{% if card.card_type in ['farm','image'] %}panel {% endif %}dynamic-card width-{{ card.width_units }} type-{{ card.card_type }}"
             data-bg="{{ card.bg_color }}"
             data-text="{{ card.text_color }}"
           >
@@ -68,6 +68,12 @@
             {% if card.card_type == "text" and card.title %}
             <p class="text-block-title">{{ card.title }}</p>
             {% endif %}
+            {% if card.card_type == "heading" %}
+            <h2 class="heading-block">{{ card.title }}</h2>
+            {% endif %}
+            {% if card.card_type == "divider" %}
+            <hr class="divider-block" />
+            {% endif %}
             {% if card.image_url %}
             <div class="card-image-wrap">
               <img
@@ -75,10 +81,12 @@
                 alt=""
                 class="card-image"
                 data-scale="{{ card.image_scale or 100 }}"
+                data-x="{{ card.image_x or 0 }}"
+                data-radius="{{ card.image_radius or 0 }}"
               />
             </div>
             {% endif %}
-            {% if card.card_type != "image" or card.caption %}
+            {% if card.card_type not in ["image", "divider"] or card.caption %}
             <div class="card-body">
               {% if card.body_text %}
               {% for line in card.body_text.split('\n') %}
@@ -116,6 +124,10 @@
         const raw = Number(img.dataset.scale || "100");
         const val = Math.max(30, Math.min(200, raw));
         img.style.transform = `scale(${val / 100})`;
+        const x = Math.max(-100, Math.min(100, Number(img.dataset.x || "0")));
+        img.style.objectPosition = `${50 + x / 2}% center`;
+        const radius = Math.max(0, Math.min(50, Number(img.dataset.radius || "0")));
+        img.style.borderRadius = `${radius}%`;
       });
     </script>
   </body>
