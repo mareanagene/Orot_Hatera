@@ -437,6 +437,24 @@
           return wrapper;
         }
 
+        function reindexCardEditors() {
+          const items = Array.from(cardsContainer.querySelectorAll(".card-editor-item"));
+          const fieldPattern = /^(card_(?:key|type|title|body|bg|text|width|sort|row|image|scale|x|radius|caption|active))_\d+$/;
+          items.forEach((card, idx) => {
+            card.setAttribute("data-idx", String(idx));
+            const label = card.querySelector(".card-editor-toolbar strong");
+            if (label) label.textContent = `#${idx + 1}`;
+
+            card.querySelectorAll("input[name], select[name], textarea[name]").forEach((field) => {
+              const currentName = field.getAttribute("name") || "";
+              const match = currentName.match(fieldPattern);
+              if (!match) return;
+              field.setAttribute("name", `${match[1]}_${idx}`);
+            });
+          });
+          cardsCount.value = String(items.length);
+        }
+
         addBtn.addEventListener("click", () => {
           const idx = Number(cardsCount.value || "0");
           cardsContainer.appendChild(createCardEditor(idx));
@@ -463,7 +481,7 @@
           if (target.classList.contains("delete-card-btn")) {
             const card = target.closest(".card-editor-item");
             if (card) card.remove();
-            cardsCount.value = String(cardsContainer.querySelectorAll(".card-editor-item").length);
+            reindexCardEditors();
             return;
           }
           if (target.classList.contains("collapse-card-btn")) {
