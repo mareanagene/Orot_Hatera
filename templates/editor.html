@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="{{ lang_code }}" dir="{{ 'rtl' if lang_code == 'he' else 'ltr' }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CMS Editor</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="top-header">
+        <div class="brand">
+          <h1>{{ content.brand_title or 'CMS Editor' }}</h1>
+          <p>{{ content.brand_tagline or ('Signed in as ' ~ current_user.username) }}</p>
+        </div>
+        <div class="header-actions">
+          <a class="lang-toggle" href="/">Home</a>
+          <a class="lang-toggle" href="/logout">Logout</a>
+        </div>
+      </header>
+
+      <main class="editor-layout">
+        <section class="editor-preview">
+          <div
+            id="preview-hero"
+            class="hero-banner"
+            data-hero-image="{{ content.hero_image or content.hero_image_url or '/static/hero-reference.png' }}"
+          >
+            <div class="hero-overlay">
+              <h2 id="preview-hero-title">{{ content.hero_title | replace('\n', '<br />') | safe }}</h2>
+            </div>
+          </div>
+          <div id="preview-notice" class="preview-notice" hidden>
+            Preview mode: changes are visible only here (not saved to DB).
+          </div>
+          <div id="preview-cards-root">
+          {% set row_ns = namespace(current=None, opened=false) %}
+          {% for card in farm_cards %}
+          {% if card.is_active %}
+          {% if row_ns.current != card.row_group %}
+          {% if row_ns.opened %}
+          </section>
+          {% endif %}
+          {% set row_ns.current = card.row_group %}
+          {% set row_ns.opened = true %}
+          <section class="cards-grid">
+          {% endif %}
+            <article
+              class="{% if card.card_type != 'text' %}panel {% endif %}dynamic-card width-{{ card.width_units }} type-{{ card.card_type }}"
+              data-bg="{{ card.bg_color }}"
+              data-text="{{ card.text_color }}"
+            >
+              {% if card.card_type == "farm" and card.title %}
+              <h3>{{ card.title }}</h3>
+              {% endif %}
+              {% if card.card_type == "text" and card.title %}
+              <p class="text-block-title">{{ card.title }}</p>
+              {% endif %}
+              {% if card.image_url %}
+              <div class="card-image-wrap">
+                <img
+                  src="{{ card.image_url }}"
+                  alt=""
+                  class="card-image"
+                  data-scale="{{ card.image_scale or 100 }}"
+                />
+              </div>
+              {% endif %}
+              {% if card.card_type != "image" or card.caption %}
+              <div class="card-body">
+                {% if card.body_text %}
+                {% for line in card.body_text.split('\n') %}
+                <p>{{ line }}</p>
+                {% endfor %}
+                {% endif %}
+                {% if card.caption %}
+                <small>{{ card.caption }}</small>
+                {% endif %}
+              </div>
+              {% endif %}
+            </article>
+          {% endif %}
+          {% endfor %}
+          {% if row_ns.opened %}
+          </section>
+          {% endif %}
+          </div>
+        </section>
+
+        <aside class="editor-sidebar">
+          <section class="panel panel-live editor-panel">
+            <h3>Dynamic CMS</h3>
+            <form method="post" class="live-form" id="editor-form">
+              <input type="hidden" name="action" value="save" />
+              <input type="hidden" name="cards_count" id="cards_count" value="{{ farm_cards|length }}" />
+
+              <label for="page_name">Farm / Page Name</label>
+              <input id="page_name" name="page_name" list="pages-list" value="{{ page_name }}" required />
+              <datalist id="pages-list">
+                {% for p in pages %}
+                <option value="{{ p }}"></option>
+                {% endfor %}
+              </datalist>
+
+              <label for="lang">Language</label>
+              <select id="lang" name="lang" style="width: 100%; padding: 8px; border-radius: 6px;">
+                <option value="he" {% if lang_code == 'he' %}selected{% endif %}>Hebrew (he)</option>
+                <option value="en" {% if lang_code == 'en' %}selected{% endif %}>English (en)</option>
+              </select>
+            <label><input type="checkbox" name="auto_translate" /> Auto-translate and sync the other language</label>
+            <div class="translate-actions">
+              <button type="submit" name="action" value="translate_to_en">
+                Translate HE -> EN (Full Page)
+              </button>
+            </div>
+
+              <label for="brand_title">brand_title</label>
+              <input id="brand_title" name="brand_title" value="{{ content.brand_title }}" />
+              <label for="brand_tagline">brand_tagline</label>
+              <input id="brand_tagline" name="brand_tagline" value="{{ content.brand_tagline }}" />
+              <label for="hero_title">hero_title</label>
+              <textarea id="hero_title" name="hero_title" rows="2">{{ content.hero_title }}</textarea>
+              <label for="hero_image">hero_image URL</label>
+              <input id="hero_image" name="hero_image" value="{{ content.hero_image }}" />
+              <label for="switch_lang_button">switch_lang_button</label>
+              <input id="switch_lang_button" name="switch_lang_button" value="{{ content.switch_lang_button }}" />
+
+              <hr />
+              <div class="editor-cards-head">
+                <strong>FARM Cards</strong>
+                <button type="button" class="lang-toggle" id="add-card-btn">+ Add FARM</button>
+              </div>
+              <div id="cards-container">
+                {% for card in farm_cards %}
+                <div class="card-editor-item" data-idx="{{ loop.index0 }}">
+                  <label>card_key</label>
+                  <input name="card_key_{{ loop.index0 }}" value="{{ card.card_key }}" />
+                  <label>card_type</label>
+                  <select name="card_type_{{ loop.index0 }}" style="width: 100%; padding: 8px; border-radius: 6px;">
+                    <option value="farm" {% if card.card_type == 'farm' %}selected{% endif %}>farm</option>
+                    <option value="text" {% if card.card_type == 'text' %}selected{% endif %}>text only</option>
+                    <option value="image" {% if card.card_type == 'image' %}selected{% endif %}>image block</option>
+                  </select>
+                  <label>title</label>
+                  <input name="card_title_{{ loop.index0 }}" value="{{ card.title }}" />
+                  <label>body_text</label>
+                  <textarea name="card_body_{{ loop.index0 }}" rows="3">{{ card.body_text }}</textarea>
+                  <label>bg_color</label>
+                  <div class="color-control">
+                    <input name="card_bg_{{ loop.index0 }}" type="color" value="{{ card.bg_color or '#223f69' }}" />
+                    <button type="button" class="lang-toggle set-default-bg">Default</button>
+                  </div>
+                  <label>text_color</label>
+                  <input name="card_text_{{ loop.index0 }}" type="color" value="{{ card.text_color or '#f4f7fb' }}" />
+                  <label>width_units (1-3)</label>
+                  <input name="card_width_{{ loop.index0 }}" type="number" min="1" max="3" value="{{ card.width_units or 1 }}" />
+                  <label>sort_order</label>
+                  <input name="card_sort_{{ loop.index0 }}" type="number" value="{{ card.sort_order or loop.index }}" />
+                  <label>row_group (same row = same number)</label>
+                  <input name="card_row_{{ loop.index0 }}" type="number" min="1" value="{{ card.row_group or 1 }}" />
+                  <label>image_url</label>
+                  <input name="card_image_{{ loop.index0 }}" value="{{ card.image_url or '' }}" />
+                  <label>image_scale (30-200)</label>
+                  <input name="card_scale_{{ loop.index0 }}" type="number" min="30" max="200" value="{{ card.image_scale or 100 }}" />
+                  <label>caption</label>
+                  <input name="card_caption_{{ loop.index0 }}" value="{{ card.caption or '' }}" />
+                  <label><input name="card_active_{{ loop.index0 }}" type="checkbox" {% if card.is_active %}checked{% endif %} /> active</label>
+                </div>
+                {% endfor %}
+              </div>
+
+              <div class="review-actions">
+                <button type="button" id="preview-btn">Preview (Editor only)</button>
+                <button type="button" id="review-btn">Review</button>
+              </div>
+              <div id="review-box" class="review-box" hidden>
+                <p id="review-summary">Review ready.</p>
+                <div id="review-diff" class="review-diff"></div>
+                <div class="review-buttons">
+                  <button type="submit" id="save-db-btn">Save DB</button>
+                  <button type="button" id="discard-btn">Discard Changes</button>
+                </div>
+              </div>
+            </form>
+            {% if message %}
+            <p style="padding: 8px 12px; color: #b7f5c7; font-weight: 700;">{{ message }}</p>
+            {% endif %}
+          </section>
+        </aside>
+      </main>
+    </div>
+    <script>
+      (function () {
+        const addBtn = document.getElementById("add-card-btn");
+        const cardsContainer = document.getElementById("cards-container");
+        const cardsCount = document.getElementById("cards_count");
+        const editorForm = document.getElementById("editor-form");
+        const previewBtn = document.getElementById("preview-btn");
+        const previewHero = document.getElementById("preview-hero");
+        const previewHeroTitle = document.getElementById("preview-hero-title");
+        const previewCardsRoot = document.getElementById("preview-cards-root");
+        const previewNotice = document.getElementById("preview-notice");
+        const reviewBtn = document.getElementById("review-btn");
+        const reviewBox = document.getElementById("review-box");
+        const reviewSummary = document.getElementById("review-summary");
+        const reviewDiff = document.getElementById("review-diff");
+        const discardBtn = document.getElementById("discard-btn");
+        const initialEntries = Array.from(new FormData(editorForm).entries());
+        const initialSnapshot = JSON.stringify(initialEntries);
+
+        function escapeHtml(value) {
+          return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;");
+        }
+
+        function normalizeFieldName(name) {
+          return name.replaceAll("_", " ");
+        }
+
+        function applyCardVisuals(scope) {
+          scope.querySelectorAll(".dynamic-card").forEach((card) => {
+            const bg = card.dataset.bg || "#223f69";
+            const text = card.dataset.text || "#f4f7fb";
+            card.style.backgroundColor = bg;
+            card.style.color = text;
+            const title = card.querySelector("h3");
+            if (title) {
+              title.style.color = text;
+              title.style.backgroundColor = "rgba(0, 0, 0, 0.22)";
+            }
+          });
+          scope.querySelectorAll(".card-image[data-scale]").forEach((img) => {
+            const raw = Number(img.dataset.scale || "100");
+            const val = Math.max(30, Math.min(200, raw));
+            img.style.transform = `scale(${val / 100})`;
+          });
+        }
+
+        function renderPreviewFromForm() {
+          const heroTitle = document.getElementById("hero_title")?.value || "";
+          const heroImage = document.getElementById("hero_image")?.value || "/static/hero-reference.png";
+          previewHero.style.backgroundImage = `linear-gradient(rgba(0, 20, 50, 0.25), rgba(0, 20, 50, 0.2)), url('${heroImage}')`;
+          previewHeroTitle.innerHTML = escapeHtml(heroTitle).replaceAll("\n", "<br />");
+
+          const cardCount = Number(cardsCount.value || "0");
+          const cards = [];
+          for (let i = 0; i < cardCount; i++) {
+            const active = editorForm.querySelector(`[name="card_active_${i}"]`)?.checked || false;
+            if (!active) continue;
+            cards.push({
+              cardType: (editorForm.querySelector(`[name="card_type_${i}"]`)?.value || "farm").trim(),
+              cardKey: (editorForm.querySelector(`[name="card_key_${i}"]`)?.value || `card_${i + 1}`).trim(),
+              title: (editorForm.querySelector(`[name="card_title_${i}"]`)?.value || "").trim(),
+              bodyText: (editorForm.querySelector(`[name="card_body_${i}"]`)?.value || "").trim(),
+              bg: (editorForm.querySelector(`[name="card_bg_${i}"]`)?.value || "#223f69").trim(),
+              text: (editorForm.querySelector(`[name="card_text_${i}"]`)?.value || "#f4f7fb").trim(),
+              width: Number(editorForm.querySelector(`[name="card_width_${i}"]`)?.value || "1"),
+              sort: Number(editorForm.querySelector(`[name="card_sort_${i}"]`)?.value || `${i + 1}`),
+              row: Number(editorForm.querySelector(`[name="card_row_${i}"]`)?.value || "1"),
+              image: (editorForm.querySelector(`[name="card_image_${i}"]`)?.value || "").trim(),
+              scale: Number(editorForm.querySelector(`[name="card_scale_${i}"]`)?.value || "100"),
+              caption: (editorForm.querySelector(`[name="card_caption_${i}"]`)?.value || "").trim(),
+            });
+          }
+          cards.sort((a, b) => (a.row - b.row) || (a.sort - b.sort));
+
+          const rows = new Map();
+          cards.forEach((card) => {
+            if (!rows.has(card.row)) rows.set(card.row, []);
+            rows.get(card.row).push(card);
+          });
+
+          const root = document.createElement("div");
+          Array.from(rows.keys()).sort((a, b) => a - b).forEach((rowNumber) => {
+            const rowEl = document.createElement("section");
+            rowEl.className = "cards-grid";
+            rows.get(rowNumber).forEach((card) => {
+              const article = document.createElement("article");
+              article.className = `${card.cardType !== "text" ? "panel " : ""}dynamic-card width-${Math.max(1, Math.min(3, card.width))} type-${card.cardType}`;
+              article.dataset.bg = card.bg;
+              article.dataset.text = card.text;
+
+              if (card.cardType === "farm" && card.title) {
+                const h3 = document.createElement("h3");
+                h3.textContent = card.title;
+                article.appendChild(h3);
+              } else if (card.cardType === "text" && card.title) {
+                const pTitle = document.createElement("p");
+                pTitle.className = "text-block-title";
+                pTitle.textContent = card.title;
+                article.appendChild(pTitle);
+              }
+
+              if (card.image) {
+                const wrap = document.createElement("div");
+                wrap.className = "card-image-wrap";
+                const img = document.createElement("img");
+                img.className = "card-image";
+                img.src = card.image;
+                img.alt = "";
+                img.dataset.scale = String(card.scale || 100);
+                wrap.appendChild(img);
+                article.appendChild(wrap);
+              }
+
+              if (card.cardType !== "image" || card.caption) {
+                const body = document.createElement("div");
+                body.className = "card-body";
+                if (card.bodyText) {
+                  card.bodyText.split("\n").forEach((line) => {
+                    const p = document.createElement("p");
+                    p.textContent = line;
+                    body.appendChild(p);
+                  });
+                }
+                if (card.caption) {
+                  const small = document.createElement("small");
+                  small.textContent = card.caption;
+                  body.appendChild(small);
+                }
+                article.appendChild(body);
+              }
+              rowEl.appendChild(article);
+            });
+            root.appendChild(rowEl);
+          });
+
+          previewCardsRoot.innerHTML = "";
+          previewCardsRoot.appendChild(root);
+          applyCardVisuals(previewCardsRoot);
+          previewNotice.hidden = false;
+        }
+
+        function createCardEditor(idx) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "card-editor-item";
+          wrapper.setAttribute("data-idx", String(idx));
+          wrapper.innerHTML = `
+            <label>card_key</label>
+            <input name="card_key_${idx}" value="farm_${idx + 1}" />
+            <label>card_type</label>
+            <select name="card_type_${idx}" style="width: 100%; padding: 8px; border-radius: 6px;">
+              <option value="farm" selected>farm</option>
+              <option value="text">text only</option>
+              <option value="image">image block</option>
+            </select>
+            <label>title</label>
+            <input name="card_title_${idx}" value="New FARM" />
+            <label>body_text</label>
+            <textarea name="card_body_${idx}" rows="3">New description</textarea>
+            <label>bg_color</label>
+            <div class="color-control">
+              <input name="card_bg_${idx}" type="color" value="#223f69" />
+              <button type="button" class="lang-toggle set-default-bg">Default</button>
+            </div>
+            <label>text_color</label>
+            <input name="card_text_${idx}" type="color" value="#f4f7fb" />
+            <label>width_units (1-3)</label>
+            <input name="card_width_${idx}" type="number" min="1" max="3" value="1" />
+            <label>sort_order</label>
+            <input name="card_sort_${idx}" type="number" value="${idx + 1}" />
+            <label>row_group (same row = same number)</label>
+            <input name="card_row_${idx}" type="number" min="1" value="1" />
+            <label>image_url</label>
+            <input name="card_image_${idx}" value="" />
+            <label>image_scale (30-200)</label>
+            <input name="card_scale_${idx}" type="number" min="30" max="200" value="100" />
+            <label>caption</label>
+            <input name="card_caption_${idx}" value="" />
+            <label><input name="card_active_${idx}" type="checkbox" checked /> active</label>
+          `;
+          return wrapper;
+        }
+
+        addBtn.addEventListener("click", () => {
+          const idx = Number(cardsCount.value || "0");
+          cardsContainer.appendChild(createCardEditor(idx));
+          cardsCount.value = String(idx + 1);
+        });
+
+        previewBtn.addEventListener("click", () => {
+          renderPreviewFromForm();
+          previewNotice.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        });
+
+        cardsContainer.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement)) return;
+          if (!target.classList.contains("set-default-bg")) return;
+          const wrapper = target.closest(".color-control");
+          if (!wrapper) return;
+          const input = wrapper.querySelector('input[type="color"]');
+          if (!(input instanceof HTMLInputElement)) return;
+          input.value = "#eef1f6";
+        });
+
+        reviewBtn.addEventListener("click", () => {
+          const currentEntries = Array.from(new FormData(editorForm).entries());
+          const currentSnapshot = JSON.stringify(currentEntries);
+          const changed = currentSnapshot === initialSnapshot ? [] : (() => {
+            const before = new Map(initialEntries);
+            const after = new Map(currentEntries);
+            const keys = new Set([...before.keys(), ...after.keys()]);
+            const list = [];
+            keys.forEach((key) => {
+              if (key === "action") return;
+              const prev = before.get(key) || "";
+              const next = after.get(key) || "";
+              if (prev !== next) {
+                list.push({ key, prev, next });
+              }
+            });
+            return list;
+          })();
+          const changedCount = changed.length;
+
+          reviewSummary.textContent =
+            changedCount > 0
+              ? `Review complete: ${changedCount} field(s) changed.`
+              : "No changes detected.";
+
+          if (changedCount > 0) {
+            reviewDiff.innerHTML = changed
+              .map((item) => {
+                const beforeText = item.prev.trim() ? escapeHtml(item.prev) : "(empty)";
+                const afterText = item.next.trim() ? escapeHtml(item.next) : "(empty)";
+                return `
+                  <div class="review-item">
+                    <div class="review-field">${escapeHtml(normalizeFieldName(item.key))}</div>
+                    <div class="review-values">
+                      <div><span class="review-label">Before:</span> ${beforeText}</div>
+                      <div><span class="review-label">After:</span> ${afterText}</div>
+                    </div>
+                  </div>
+                `;
+              })
+              .join("");
+          } else {
+            reviewDiff.innerHTML = "<div class='review-item'><div class='review-field'>No field changes.</div></div>";
+          }
+          reviewBox.hidden = false;
+          reviewBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        });
+
+        discardBtn.addEventListener("click", () => {
+          window.location.reload();
+        });
+
+        applyCardVisuals(document);
+        document.querySelectorAll(".hero-banner[data-hero-image]").forEach((hero) => {
+          const image = hero.dataset.heroImage;
+          if (!image) return;
+          hero.style.backgroundImage = `linear-gradient(rgba(0, 20, 50, 0.25), rgba(0, 20, 50, 0.2)), url('${image}')`;
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="{{ current_lang }}" dir="{{ page_dir }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ content.brand_title }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="top-header">
+        <div class="brand">
+          <h1>{{ content.brand_title }}</h1>
+          <p>{{ content.brand_tagline }}</p>
+        </div>
+        <div class="header-actions">
+          <a class="lang-toggle" href="/?lang={{ toggle_lang }}">{{ content.switch_lang_button }}</a>
+          <div class="profile-menu">
+            <button class="profile-trigger" type="button" aria-label="Account menu">
+              <span class="profile-avatar">👤</span>
+            </button>
+            <div class="profile-popover">
+              {% if current_user %}
+              <p class="profile-status">Connected as: {{ current_user.username }}</p>
+              <a class="profile-link" href="/editor">CMS Editor</a>
+              <a class="profile-link" href="/users">Users</a>
+              <a class="profile-link" href="/logout">Logout</a>
+              {% else %}
+              <p class="profile-status">Not connected</p>
+              <a class="profile-link" href="/login">Login</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="page">
+        <section
+          class="hero-banner"
+          {% if content.hero_image_url %}
+          style="background-image: linear-gradient(rgba(0, 20, 50, 0.25), rgba(0, 20, 50, 0.2)), url('{{ content.hero_image_url }}');"
+          {% endif %}
+        >
+          <div class="hero-overlay">
+            <h2>{{ content.hero_title | replace('\n', '<br />') | safe }}</h2>
+          </div>
+        </section>
+
+        {% set row_ns = namespace(current=None, opened=false) %}
+        {% for card in farm_cards %}
+        {% if card.is_active %}
+        {% if row_ns.current != card.row_group %}
+        {% if row_ns.opened %}
+        </section>
+        {% endif %}
+        {% set row_ns.current = card.row_group %}
+        {% set row_ns.opened = true %}
+        <section class="cards-grid">
+        {% endif %}
+          <article
+            class="{% if card.card_type != 'text' %}panel {% endif %}dynamic-card width-{{ card.width_units }} type-{{ card.card_type }}"
+            data-bg="{{ card.bg_color }}"
+            data-text="{{ card.text_color }}"
+          >
+            {% if card.card_type == "farm" and card.title %}
+            <h3>{{ card.title }}</h3>
+            {% endif %}
+            {% if card.card_type == "text" and card.title %}
+            <p class="text-block-title">{{ card.title }}</p>
+            {% endif %}
+            {% if card.image_url %}
+            <div class="card-image-wrap">
+              <img
+                src="{{ card.image_url }}"
+                alt=""
+                class="card-image"
+                data-scale="{{ card.image_scale or 100 }}"
+              />
+            </div>
+            {% endif %}
+            {% if card.card_type != "image" or card.caption %}
+            <div class="card-body">
+              {% if card.body_text %}
+              {% for line in card.body_text.split('\n') %}
+              <p>{{ line }}</p>
+              {% endfor %}
+              {% endif %}
+              {% if card.caption %}
+              <small>{{ card.caption }}</small>
+              {% endif %}
+            </div>
+            {% endif %}
+          </article>
+        {% endif %}
+        {% endfor %}
+        {% if row_ns.opened %}
+        </section>
+        {% endif %}
+      </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+    <script>
+      document.querySelectorAll(".dynamic-card").forEach((card) => {
+        const bg = card.dataset.bg || "#223f69";
+        const text = card.dataset.text || "#f4f7fb";
+        card.style.backgroundColor = bg;
+        card.style.color = text;
+        const title = card.querySelector("h3");
+        if (title) {
+          title.style.color = text;
+          title.style.backgroundColor = "rgba(0, 0, 0, 0.22)";
+        }
+      });
+      document.querySelectorAll(".card-image[data-scale]").forEach((img) => {
+        const raw = Number(img.dataset.scale || "100");
+        const val = Math.max(30, Math.min(200, raw));
+        img.style.transform = `scale(${val / 100})`;
+      });
+    </script>
+  </body>
+</html>

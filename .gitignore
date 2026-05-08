@@ -1,0 +1,27 @@
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Private keys and certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Local databases / dumps
+*.sqlitedb
+*.sqlite3
+*.db
+*.dump
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# IDE / OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
