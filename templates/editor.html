@@ -1,21 +1,24 @@
 <!doctype html>
-<html lang="{{ lang_code }}" dir="{{ 'rtl' if lang_code == 'he' else 'ltr' }}">
+<html lang="he" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CMS Editor</title>
+    <title>עורך האתר</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <div class="site-shell">
       <header class="top-header">
         <div class="brand">
-          <h1>{{ content.brand_title or 'CMS Editor' }}</h1>
-          <p>{{ content.brand_tagline or ('Signed in as ' ~ current_user.username) }}</p>
+          <h1>{{ content.brand_title or 'עורך האתר' }}</h1>
+          <p>{{ content.brand_tagline or ('מחובר: ' ~ current_user.username) }}</p>
         </div>
         <div class="header-actions">
-          <a class="lang-toggle" href="/">Home</a>
-          <a class="lang-toggle" href="/logout">Logout</a>
+          <a class="lang-toggle" href="/editor/contacts">פניות צור קשר</a>
+          <a class="lang-toggle" href="/editor/projects">פרויקטים</a>
+          <a class="lang-toggle" href="/editor/team">עץ ארגון</a>
+          <a class="lang-toggle" href="/">דף הבית</a>
+          <a class="lang-toggle" href="/logout">התנתקות</a>
         </div>
       </header>
 
@@ -24,7 +27,7 @@
           <div
             id="preview-hero"
             class="hero-banner"
-            data-hero-image="{{ content.hero_image or content.hero_image_url or '/static/hero-reference.png' }}"
+            data-hero-image="{{ content.hero_image or content.hero_image_url or default_hero_image_url }}"
           >
             <div class="hero-overlay">
               <h2 id="preview-hero-title">{{ content.hero_title | replace('\n', '<br />') | safe }}</h2>
@@ -113,18 +116,6 @@
                 {% endfor %}
               </datalist>
 
-              <label for="lang">Language</label>
-              <select id="lang" name="lang" style="width: 100%; padding: 8px; border-radius: 6px;">
-                <option value="he" {% if lang_code == 'he' %}selected{% endif %}>Hebrew (he)</option>
-                <option value="en" {% if lang_code == 'en' %}selected{% endif %}>English (en)</option>
-              </select>
-            <label><input type="checkbox" name="auto_translate" /> Auto-translate and sync the other language</label>
-            <div class="translate-actions">
-              <button type="submit" name="action" value="translate_to_en">
-                Translate HE -> EN (Full Page)
-              </button>
-            </div>
-
               <label for="brand_title">brand_title</label>
               <input id="brand_title" name="brand_title" value="{{ content.brand_title }}" />
               <label for="brand_tagline">brand_tagline</label>
@@ -133,13 +124,11 @@
               <textarea id="hero_title" name="hero_title" rows="2">{{ content.hero_title }}</textarea>
               <label for="hero_image">hero_image URL</label>
               <input id="hero_image" name="hero_image" value="{{ content.hero_image }}" />
-              <label for="switch_lang_button">switch_lang_button</label>
-              <input id="switch_lang_button" name="switch_lang_button" value="{{ content.switch_lang_button }}" />
 
               <hr />
               <div class="editor-cards-head">
                 <strong>FARM Cards</strong>
-                <button type="button" class="lang-toggle" id="add-card-btn">+ Add FARM</button>
+                <a class="lang-toggle" href="/editor/team" style="text-decoration: none;">עץ ארגון</a>
               </div>
               <div id="cards-container">
                 {% for card in farm_cards %}
@@ -219,7 +208,6 @@
     </div>
     <script>
       (function () {
-        const addBtn = document.getElementById("add-card-btn");
         const newPageBtn = document.getElementById("new-page-btn");
         const cardsContainer = document.getElementById("cards-container");
         const cardsCount = document.getElementById("cards_count");
@@ -273,7 +261,7 @@
 
         function renderPreviewFromForm() {
           const heroTitle = document.getElementById("hero_title")?.value || "";
-          const heroImage = document.getElementById("hero_image")?.value || "/static/hero-reference.png";
+          const heroImage = document.getElementById("hero_image")?.value || {{ default_hero_image_url | tojson }};
           previewHero.style.backgroundImage = `linear-gradient(rgba(0, 20, 50, 0.25), rgba(0, 20, 50, 0.2)), url('${heroImage}')`;
           previewHeroTitle.innerHTML = escapeHtml(heroTitle).replaceAll("\n", "<br />");
 
@@ -379,64 +367,6 @@
           previewNotice.hidden = false;
         }
 
-        function createCardEditor(idx) {
-          const wrapper = document.createElement("div");
-          wrapper.className = "card-editor-item";
-          wrapper.setAttribute("data-idx", String(idx));
-          wrapper.innerHTML = `
-            <div class="card-editor-toolbar">
-              <strong>#${idx + 1}</strong>
-              <div>
-                <button type="button" class="lang-toggle collapse-card-btn">Collapse</button>
-                <button type="button" class="lang-toggle delete-card-btn">Delete</button>
-              </div>
-            </div>
-            <div class="card-editor-fields">
-            <label>card_key</label>
-            <input name="card_key_${idx}" value="farm_${idx + 1}" />
-            <label>card_type</label>
-            <select name="card_type_${idx}" style="width: 100%; padding: 8px; border-radius: 6px;">
-              <option value="farm" selected>farm</option>
-              <option value="text">text only</option>
-              <option value="image">image block</option>
-              <option value="heading">heading</option>
-              <option value="divider">divider / bar</option>
-            </select>
-            <label>title</label>
-            <input name="card_title_${idx}" value="New FARM" />
-            <label>body_text</label>
-            <textarea name="card_body_${idx}" rows="3">New description</textarea>
-            <label>bg_color</label>
-            <div class="color-control">
-              <input name="card_bg_${idx}" type="color" value="#223f69" />
-              <button type="button" class="lang-toggle set-default-bg">Default</button>
-            </div>
-            <label>text_color</label>
-            <input name="card_text_${idx}" type="color" value="#f4f7fb" />
-            <label>width_units (1-3)</label>
-            <input name="card_width_${idx}" type="number" min="1" max="3" value="1" />
-            <label>sort_order</label>
-            <input name="card_sort_${idx}" type="number" value="${idx + 1}" />
-            <label>row_group (same row = same number)</label>
-            <input name="card_row_${idx}" type="number" min="1" value="1" />
-            <label>image_url</label>
-            <input name="card_image_${idx}" value="" />
-            <label>Upload image from computer</label>
-            <input type="file" accept="image/*" class="card-image-upload" />
-            <label>image_scale (30-200)</label>
-            <input name="card_scale_${idx}" type="number" min="30" max="200" value="100" />
-            <label>image_x (-100 left .. 100 right)</label>
-            <input name="card_x_${idx}" type="number" min="-100" max="100" value="0" />
-            <label>image_radius (0 square .. 50 circle)</label>
-            <input name="card_radius_${idx}" type="number" min="0" max="50" value="0" />
-            <label>caption</label>
-            <input name="card_caption_${idx}" value="" />
-            <label><input name="card_active_${idx}" type="checkbox" checked /> active</label>
-            </div>
-          `;
-          return wrapper;
-        }
-
         function reindexCardEditors() {
           const items = Array.from(cardsContainer.querySelectorAll(".card-editor-item"));
           const fieldPattern = /^(card_(?:key|type|title|body|bg|text|width|sort|row|image|scale|x|radius|caption|active))_\d+$/;
@@ -454,12 +384,6 @@
           });
           cardsCount.value = String(items.length);
         }
-
-        addBtn.addEventListener("click", () => {
-          const idx = Number(cardsCount.value || "0");
-          cardsContainer.appendChild(createCardEditor(idx));
-          cardsCount.value = String(idx + 1);
-        });
 
         newPageBtn?.addEventListener("click", () => {
           const name = window.prompt("Enter new page name (example: farm_2):", "");
