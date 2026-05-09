@@ -1,35 +1,35 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Users</title>
+    <title>משתמשים</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <div class="site-shell">
       <header class="top-header">
         <div class="brand">
-          <h1>Users Management</h1>
-          <p>Signed in as {{ current_user.username }}</p>
+          <h1>ניהול משתמשים</h1>
+          <p>מחובר: {{ current_user.username }}</p>
         </div>
         <div class="header-actions">
-          <a class="lang-toggle" href="/">Home</a>
-          <a class="lang-toggle" href="/logout">Logout</a>
+          <a class="lang-toggle" href="/">דף הבית</a>
+          <a class="lang-toggle" href="/logout">התנתקות</a>
         </div>
       </header>
 
       <main class="page" style="padding: 14px;">
         <section class="panel panel-live" style="min-height: auto; margin-bottom: 12px;">
-          <h3>Add User</h3>
+          <h3>הוספת משתמש</h3>
           <form method="post" class="live-form" style="max-width: 500px;">
-            <label for="username">Username</label>
+            <label for="username">שם משתמש</label>
             <input id="username" name="username" required />
 
-            <label for="password">Password (min 6 chars)</label>
+            <label for="password">סיסמה (לפחות 6 תווים)</label>
             <input id="password" name="password" type="password" required minlength="6" />
 
-            <button type="submit">Create User</button>
+            <button type="submit">יצירת משתמש</button>
           </form>
           {% if error %}
           <p style="padding: 0 12px 12px; color: #ffb4b4;">{{ error }}</p>
@@ -40,10 +40,10 @@
         </section>
 
         <section class="panel panel-projects" style="min-height: auto;">
-          <h3>Existing Users</h3>
+          <h3>משתמשים קיימים</h3>
           <ul>
             {% for user in users %}
-            <li>{{ user.username }} - {{ user.created_at }}</li>
+            <li>{{ user.username }} — {{ user.created_at }}</li>
             {% endfor %}
           </ul>
         </section>

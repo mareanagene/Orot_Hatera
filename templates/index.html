@@ -1,51 +1,77 @@
 <!doctype html>
-<html lang="{{ current_lang }}" dir="{{ page_dir }}">
+<html lang="he" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="אורות הטירה בע&quot;מ — תאורת כבישים ותשתיות." />
     <title>{{ content.brand_title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
-  <body>
+  <body class="theme-public theme-fullwidth">
     <div class="site-shell">
-      <header class="top-header">
-        <div class="brand">
-          <h1>{{ content.brand_title }}</h1>
-          <p>{{ content.brand_tagline }}</p>
+      <header class="top-header pub-header">
+        <div class="brand pub-brand">
+          <a href="/" class="brand-lockup">
+            <span class="brand-text">
+              <span class="brand-title">{{ content.brand_title }}</span>
+              <span class="brand-tag">{{ content.brand_tagline }}</span>
+            </span>
+          </a>
         </div>
+        <nav class="site-nav" aria-label="ניווט ראשי">
+          <a class="nav-link" href="{{ url_for('index') }}">בית</a>
+          <a class="nav-link" href="{{ url_for('index') }}#content">תוכן</a>
+          <a class="nav-link" href="{{ url_for('projects_page') }}">הפרויקטים שלנו</a>
+          <a class="nav-link" href="{{ url_for('team') }}">הנהלה והצוות</a>
+        </nav>
         <div class="header-actions">
-          <a class="lang-toggle" href="/?lang={{ toggle_lang }}">{{ content.switch_lang_button }}</a>
+          <button type="button" class="lang-toggle pub-contact-btn" id="contact-open" aria-haspopup="dialog" aria-controls="contact-modal">
+            צור קשר
+          </button>
           <div class="profile-menu">
-            <button class="profile-trigger" type="button" aria-label="Account menu">
+            <button class="profile-trigger pub-profile-trigger" type="button" aria-label="תפריט חשבון">
               <span class="profile-avatar">👤</span>
             </button>
             <div class="profile-popover">
               {% if current_user %}
-              <p class="profile-status">Connected as: {{ current_user.username }}</p>
-              <a class="profile-link" href="/editor">CMS Editor</a>
-              <a class="profile-link" href="/users">Users</a>
-              <a class="profile-link" href="/logout">Logout</a>
+              <p class="profile-status">מחובר: {{ current_user.username }}</p>
+              <a class="profile-link" href="/editor">עורך האתר</a>
+              <a class="profile-link" href="/editor/projects">פרויקטים</a>
+              <a class="profile-link" href="/editor/team">עץ ארגון</a>
+              <a class="profile-link" href="/editor/contacts">פניות צור קשר</a>
+              <a class="profile-link" href="/users">משתמשים</a>
+              <a class="profile-link" href="/logout">התנתקות</a>
               {% else %}
-              <p class="profile-status">Not connected</p>
-              <a class="profile-link" href="/login">Login</a>
+              <p class="profile-status">לא מחובר</p>
+              <a class="profile-link" href="/login">כניסה</a>
               {% endif %}
             </div>
           </div>
         </div>
       </header>
 
-      <main class="page">
+      <main class="page pub-page">
         <section
-          class="hero-banner"
+          id="hero"
+          class="hero-banner pub-hero"
           {% if content.hero_image_url %}
-          style="background-image: linear-gradient(rgba(0, 20, 50, 0.25), rgba(0, 20, 50, 0.2)), url('{{ content.hero_image_url }}');"
+          style="background-image: linear-gradient(rgba(8, 20, 36, 0.35), rgba(8, 20, 36, 0.28)), url('{{ content.hero_image_url }}');"
           {% endif %}
         >
-          <div class="hero-overlay">
-            <h2>{{ content.hero_title | replace('\n', '<br />') | safe }}</h2>
+          <div class="hero-overlay pub-hero-overlay">
+            <div class="hero-copy">
+              <h2>{{ content.hero_title | replace('\n', '<br />') | safe }}</h2>
+            </div>
           </div>
         </section>
 
+        <div id="content" class="pub-content-wrap">
         {% set row_ns = namespace(current=None, opened=false) %}
         {% for card in farm_cards %}
         {% if card.is_active %}
@@ -104,7 +130,61 @@
         {% if row_ns.opened %}
         </section>
         {% endif %}
+        </div>
+
+        <footer class="pub-footer">
+          <div class="pub-footer-inner">
+            <div class="pub-footer-brand">
+              <strong>{{ content.brand_title }}</strong>
+              <span>{{ content.brand_tagline }}</span>
+            </div>
+            <p class="pub-footer-copy">
+              תאורה חכמה ואמינה לדרכים ולתשתיות — אורות הטירה בע&quot;מ.
+            </p>
+            <div class="pub-footer-meta">
+              <a href="#hero">למעלה</a>
+              <span class="pub-dot">·</span>
+              <span>&copy; {{ content.brand_title }}</span>
+            </div>
+          </div>
+        </footer>
       </main>
+    </div>
+
+    <div
+      id="contact-modal"
+      class="contact-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="contact-modal-title"
+      aria-hidden="true"
+      hidden
+      data-msg-success="תודה! קיבלנו את הפנייה — נחזור אליך בהקדם."
+      data-msg-network="שגיאת רשת. נסו שוב."
+    >
+      <div class="contact-modal__backdrop" id="contact-backdrop" tabindex="-1"></div>
+      <div class="contact-modal__panel">
+        <button type="button" class="contact-modal__close" id="contact-close" aria-label="סגור">×</button>
+        <h2 id="contact-modal-title" class="contact-modal__title">צור קשר</h2>
+        <p class="contact-modal__lead">
+          השאירו שם, מייל וטלפון (אופציונלי) — נחזור אליכם בהקדם.
+        </p>
+        <form id="contact-form" class="contact-modal__form">
+          <label for="contact-name">שם מלא</label>
+          <input id="contact-name" name="full_name" type="text" required maxlength="160" autocomplete="name" />
+          <label for="contact-email">אימייל</label>
+          <input id="contact-email" name="email" type="email" required maxlength="255" autocomplete="email" />
+          <label for="contact-phone">טלפון (אופציונלי)</label>
+          <input id="contact-phone" name="phone" type="tel" maxlength="40" autocomplete="tel" inputmode="tel" />
+          <label for="contact-note">הערה (אופציונלי)</label>
+          <textarea id="contact-note" name="note" rows="2" maxlength="1000"></textarea>
+          <p id="contact-message" class="contact-modal__msg" role="status" aria-live="polite"></p>
+          <div class="contact-modal__actions">
+            <button type="button" class="lang-toggle" id="contact-cancel">ביטול</button>
+            <button type="submit" class="contact-modal__submit">שליחה</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <script src="/static/app.js"></script>
@@ -129,6 +209,96 @@
         const radius = Math.max(0, Math.min(50, Number(img.dataset.radius || "0")));
         img.style.borderRadius = `${radius}%`;
       });
+
+      (function () {
+        const modal = document.getElementById("contact-modal");
+        const openBtn = document.getElementById("contact-open");
+        const closeBtn = document.getElementById("contact-close");
+        const cancelBtn = document.getElementById("contact-cancel");
+        const backdrop = document.getElementById("contact-backdrop");
+        const form = document.getElementById("contact-form");
+        const msg = document.getElementById("contact-message");
+        if (!modal || !openBtn) return;
+
+        const CONTACT_SENT_KEY = "contact_form_sent";
+        let autoOpenTimer = null;
+
+        function clearAutoOpenTimer() {
+          if (autoOpenTimer !== null) {
+            clearTimeout(autoOpenTimer);
+            autoOpenTimer = null;
+          }
+        }
+
+        function openModal() {
+          clearAutoOpenTimer();
+          modal.hidden = false;
+          modal.setAttribute("aria-hidden", "false");
+          document.body.style.overflow = "hidden";
+          document.getElementById("contact-name")?.focus();
+        }
+
+        function closeModal() {
+          modal.hidden = true;
+          modal.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+          if (msg) msg.textContent = "";
+          openBtn.focus();
+        }
+
+        if (sessionStorage.getItem(CONTACT_SENT_KEY) !== "1") {
+          autoOpenTimer = setTimeout(() => {
+            autoOpenTimer = null;
+            if (sessionStorage.getItem(CONTACT_SENT_KEY) === "1") return;
+            if (!modal.hidden) return;
+            openModal();
+          }, 60000);
+        }
+
+        openBtn.addEventListener("click", openModal);
+        closeBtn?.addEventListener("click", closeModal);
+        cancelBtn?.addEventListener("click", closeModal);
+        backdrop?.addEventListener("click", closeModal);
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && !modal.hidden) closeModal();
+        });
+
+        form?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (!msg) return;
+          msg.textContent = "";
+          msg.style.color = "";
+          const full_name = (document.getElementById("contact-name")?.value || "").trim();
+          const email = (document.getElementById("contact-email")?.value || "").trim();
+          const phone = (document.getElementById("contact-phone")?.value || "").trim();
+          const note = (document.getElementById("contact-note")?.value || "").trim();
+          try {
+            const res = await fetch("/api/contact", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                full_name,
+                email,
+                phone: phone || undefined,
+                note: note || undefined,
+              }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+              msg.textContent = data.error || "Error";
+              return;
+            }
+            clearAutoOpenTimer();
+            sessionStorage.setItem(CONTACT_SENT_KEY, "1");
+            msg.style.color = "#1f7a3e";
+            msg.textContent = modal.getAttribute("data-msg-success") || "";
+            form.reset();
+            setTimeout(closeModal, 2200);
+          } catch (err) {
+            msg.textContent = modal.getAttribute("data-msg-network") || "";
+          }
+        });
+      })();
     </script>
   </body>
 </html>
