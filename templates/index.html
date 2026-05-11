@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="אורות הטירה בע&quot;מ — תאורת כבישים ותשתיות." />
+    <title>{{ content.brand_title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body class="theme-public theme-fullwidth">
+    <div class="site-shell">
+      <header class="top-header pub-header">
+        <div class="brand pub-brand">
+          <a href="/" class="brand-lockup">
+            <span class="brand-text">
+              <span class="brand-title">{{ content.brand_title }}</span>
+              <span class="brand-tag">{{ content.brand_tagline }}</span>
+            </span>
+          </a>
+        </div>
+        <nav class="site-nav" aria-label="ניווט ראשי">
+          <a class="nav-link" href="{{ url_for('index') }}">בית</a>
+          <a class="nav-link" href="{{ url_for('index') }}#content">תוכן</a>
+          <a class="nav-link" href="{{ url_for('projects_page') }}">הפרויקטים שלנו</a>
+          <a class="nav-link" href="{{ url_for('team') }}">הנהלה והצוות</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="lang-toggle pub-contact-btn" id="contact-open" aria-haspopup="dialog" aria-controls="contact-modal">
+            צור קשר
+          </button>
+          <div class="profile-menu">
+            <button class="profile-trigger pub-profile-trigger" type="button" aria-label="תפריט חשבון">
+              <span class="profile-avatar">👤</span>
+            </button>
+            <div class="profile-popover">
+              {% if current_user %}
+              <p class="profile-status">מחובר: {{ current_user.username }}</p>
+              <a class="profile-link" href="/editor">עורך האתר</a>
+              <a class="profile-link" href="/editor/projects">פרויקטים</a>
+              <a class="profile-link" href="/editor/team">עץ ארגון</a>
+              <a class="profile-link" href="/editor/contacts">פניות צור קשר</a>
+              <a class="profile-link" href="/users">משתמשים</a>
+              <a class="profile-link" href="/logout">התנתקות</a>
+              {% else %}
+              <p class="profile-status">לא מחובר</p>
+              <a class="profile-link" href="/login">כניסה</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="page pub-page">
+        <section
+          id="hero"
+          class="hero-banner pub-hero"
+          {% if content.hero_image_url %}
+          style="background-image: linear-gradient(rgba(8, 20, 36, 0.35), rgba(8, 20, 36, 0.28)), url('{{ content.hero_image_url }}');"
+          {% endif %}
+        >
+          <div class="hero-overlay pub-hero-overlay">
+            <div class="hero-copy">
+              <h2>{{ content.hero_title | replace('\n', '<br />') | safe }}</h2>
+            </div>
+          </div>
+        </section>
+
+        <div id="content" class="pub-content-wrap">
+        {% set row_ns = namespace(current=None, opened=false) %}
+        {% for card in farm_cards %}
+        {% if card.is_active %}
+        {% if row_ns.current != card.row_group %}
+        {% if row_ns.opened %}
+        </section>
+        {% endif %}
+        {% set row_ns.current = card.row_group %}
+        {% set row_ns.opened = true %}
+        <section class="cards-grid">
+        {% endif %}
+          <article
+            class="{% if card.card_type in ['farm','image'] %}panel {% endif %}dynamic-card width-{{ card.width_units }} type-{{ card.card_type }}"
+            data-bg="{{ card.bg_color }}"
+            data-text="{{ card.text_color }}"
+          >
+            {% if card.card_type == "farm" and card.title %}
+            <h3>{{ card.title }}</h3>
+            {% endif %}
+            {% if card.card_type == "text" and card.title %}
+            <p class="text-block-title">{{ card.title }}</p>
+            {% endif %}
+            {% if card.card_type == "heading" %}
+            <h2 class="heading-block">{{ card.title }}</h2>
+            {% endif %}
+            {% if card.card_type == "divider" %}
+            <hr class="divider-block" />
+            {% endif %}
+            {% if card.image_url %}
+            <div class="card-image-wrap">
+              <img
+                src="{{ card.image_url }}"
+                alt=""
+                class="card-image"
+                data-scale="{{ card.image_scale or 100 }}"
+                data-x="{{ card.image_x or 0 }}"
+                data-radius="{{ card.image_radius or 0 }}"
+              />
+            </div>
+            {% endif %}
+            {% if card.card_type not in ["image", "divider"] or card.caption %}
+            <div class="card-body">
+              {% if card.body_text %}
+              {% for line in card.body_text.split('\n') %}
+              <p>{{ line }}</p>
+              {% endfor %}
+              {% endif %}
+              {% if card.caption %}
+              <small>{{ card.caption }}</small>
+              {% endif %}
+            </div>
+            {% endif %}
+          </article>
+        {% endif %}
+        {% endfor %}
+        {% if row_ns.opened %}
+        </section>
+        {% endif %}
+        </div>
+
+        <footer class="pub-footer">
+          <div class="pub-footer-inner">
+            <div class="pub-footer-brand">
+              <strong>{{ content.brand_title }}</strong>
+              <span>{{ content.brand_tagline }}</span>
+            </div>
+            <p class="pub-footer-copy">
+              תאורה חכמה ואמינה לדרכים ולתשתיות — אורות הטירה בע&quot;מ.
+            </p>
+            <div class="pub-footer-meta">
+              <a href="#hero">למעלה</a>
+              <span class="pub-dot">·</span>
+              <span>&copy; {{ content.brand_title }}</span>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <div
+      id="contact-modal"
+      class="contact-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="contact-modal-title"
+      aria-hidden="true"
+      hidden
+      data-msg-success="תודה! קיבלנו את הפנייה — נחזור אליך בהקדם."
+      data-msg-network="שגיאת רשת. נסו שוב."
+    >
+      <div class="contact-modal__backdrop" id="contact-backdrop" tabindex="-1"></div>
+      <div class="contact-modal__panel">
+        <button type="button" class="contact-modal__close" id="contact-close" aria-label="סגור">×</button>
+        <h2 id="contact-modal-title" class="contact-modal__title">צור קשר</h2>
+        <p class="contact-modal__lead">
+          השאירו שם, מייל וטלפון (אופציונלי) — נחזור אליכם בהקדם.
+        </p>
+        <form id="contact-form" class="contact-modal__form">
+          <label for="contact-name">שם מלא</label>
+          <input id="contact-name" name="full_name" type="text" required maxlength="160" autocomplete="name" />
+          <label for="contact-email">אימייל</label>
+          <input id="contact-email" name="email" type="email" required maxlength="255" autocomplete="email" />
+          <label for="contact-phone">טלפון (אופציונלי)</label>
+          <input id="contact-phone" name="phone" type="tel" maxlength="40" autocomplete="tel" inputmode="tel" />
+          <label for="contact-note">הערה (אופציונלי)</label>
+          <textarea id="contact-note" name="note" rows="2" maxlength="1000"></textarea>
+          <p id="contact-message" class="contact-modal__msg" role="status" aria-live="polite"></p>
+          <div class="contact-modal__actions">
+            <button type="button" class="lang-toggle" id="contact-cancel">ביטול</button>
+            <button type="submit" class="contact-modal__submit">שליחה</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+    <script>
+      document.querySelectorAll(".dynamic-card").forEach((card) => {
+        const bg = card.dataset.bg || "#223f69";
+        const text = card.dataset.text || "#f4f7fb";
+        card.style.backgroundColor = bg;
+        card.style.color = text;
+        const title = card.querySelector("h3");
+        if (title) {
+          title.style.color = text;
+          title.style.backgroundColor = "rgba(0, 0, 0, 0.22)";
+        }
+      });
+      document.querySelectorAll(".card-image[data-scale]").forEach((img) => {
+        const raw = Number(img.dataset.scale || "100");
+        const val = Math.max(30, Math.min(200, raw));
+        img.style.transform = `scale(${val / 100})`;
+        const x = Math.max(-100, Math.min(100, Number(img.dataset.x || "0")));
+        img.style.objectPosition = `${50 + x / 2}% center`;
+        const radius = Math.max(0, Math.min(50, Number(img.dataset.radius || "0")));
+        img.style.borderRadius = `${radius}%`;
+      });
+
+      (function () {
+        const modal = document.getElementById("contact-modal");
+        const openBtn = document.getElementById("contact-open");
+        const closeBtn = document.getElementById("contact-close");
+        const cancelBtn = document.getElementById("contact-cancel");
+        const backdrop = document.getElementById("contact-backdrop");
+        const form = document.getElementById("contact-form");
+        const msg = document.getElementById("contact-message");
+        if (!modal || !openBtn) return;
+
+        const CONTACT_SENT_KEY = "contact_form_sent";
+        let autoOpenTimer = null;
+
+        function clearAutoOpenTimer() {
+          if (autoOpenTimer !== null) {
+            clearTimeout(autoOpenTimer);
+            autoOpenTimer = null;
+          }
+        }
+
+        function openModal() {
+          clearAutoOpenTimer();
+          modal.hidden = false;
+          modal.setAttribute("aria-hidden", "false");
+          document.body.style.overflow = "hidden";
+          document.getElementById("contact-name")?.focus();
+        }
+
+        function closeModal() {
+          modal.hidden = true;
+          modal.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+          if (msg) msg.textContent = "";
+          openBtn.focus();
+        }
+
+        if (sessionStorage.getItem(CONTACT_SENT_KEY) !== "1") {
+          autoOpenTimer = setTimeout(() => {
+            autoOpenTimer = null;
+            if (sessionStorage.getItem(CONTACT_SENT_KEY) === "1") return;
+            if (!modal.hidden) return;
+            openModal();
+          }, 60000);
+        }
+
+        openBtn.addEventListener("click", openModal);
+        closeBtn?.addEventListener("click", closeModal);
+        cancelBtn?.addEventListener("click", closeModal);
+        backdrop?.addEventListener("click", closeModal);
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && !modal.hidden) closeModal();
+        });
+
+        form?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (!msg) return;
+          msg.textContent = "";
+          msg.style.color = "";
+          const full_name = (document.getElementById("contact-name")?.value || "").trim();
+          const email = (document.getElementById("contact-email")?.value || "").trim();
+          const phone = (document.getElementById("contact-phone")?.value || "").trim();
+          const note = (document.getElementById("contact-note")?.value || "").trim();
+          try {
+            const res = await fetch("/api/contact", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                full_name,
+                email,
+                phone: phone || undefined,
+                note: note || undefined,
+              }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+              msg.textContent = data.error || "Error";
+              return;
+            }
+            clearAutoOpenTimer();
+            sessionStorage.setItem(CONTACT_SENT_KEY, "1");
+            msg.style.color = "#1f7a3e";
+            msg.textContent = modal.getAttribute("data-msg-success") || "";
+            form.reset();
+            setTimeout(closeModal, 2200);
+          } catch (err) {
+            msg.textContent = modal.getAttribute("data-msg-network") || "";
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
