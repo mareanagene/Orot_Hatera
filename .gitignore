@@ -16,10 +16,6 @@
 *.db
 *.dump
 
-# Python cache
-__pycache__/
-*.py[cod]
-
 # IDE / OS noise
 .DS_Store
 Thumbs.db

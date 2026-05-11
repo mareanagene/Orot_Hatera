@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>משתמשים</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="top-header">
+        <div class="brand">
+          <h1>ניהול משתמשים</h1>
+          <p>מחובר: {{ $current_user['username'] }}</p>
+        </div>
+        <div class="header-actions">
+          <a class="lang-toggle" href="{{ route('index') }}">דף הבית</a>
+          <a class="lang-toggle" href="{{ route('logout') }}">התנתקות</a>
+        </div>
+      </header>
+
+      <main class="page" style="padding: 14px;">
+        <section class="panel panel-live" style="min-height: auto; margin-bottom: 12px;">
+          <h3>הוספת משתמש</h3>
+          <form method="post" class="live-form" style="max-width: 500px;">
+            @csrf
+            <label for="username">שם משתמש</label>
+            <input id="username" name="username" required />
+
+            <label for="password">סיסמה (לפחות 6 תווים)</label>
+            <input id="password" name="password" type="password" required minlength="6" />
+
+            <button type="submit">יצירת משתמש</button>
+          </form>
+          @if(!empty($error))
+          <p style="padding: 0 12px 12px; color: #ffb4b4;">{{ $error }}</p>
+          @endif
+          @if(!empty($success))
+          <p style="padding: 0 12px 12px; color: #b7f5c7;">{{ $success }}</p>
+          @endif
+        </section>
+
+        <section class="panel panel-projects" style="min-height: auto;">
+          <h3>משתמשים קיימים</h3>
+          <ul>
+            @foreach($users as $user)
+            <li>{{ $user->username }} — {{ $user->created_at }}</li>
+            @endforeach
+          </ul>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

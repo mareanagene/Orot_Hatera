@@ -1,46 +1,40 @@
 # Orot HaTira CMS Website
 
-A Flask + MySQL web platform for managing a dynamic, bilingual (Hebrew/English) infrastructure website.
+A Laravel + MySQL web platform for managing a dynamic Hebrew infrastructure website.
 
-The system includes a public site, secure login, user management, and a visual CMS editor with preview/review workflow before saving to production content.
+The system includes a public site, secure login, user management, contact lead capture, and a CMS editor for homepage, team, and projects content.
 
 ---
 
 ## Features
 
-- Dynamic homepage content from MySQL (no hardcoded page text)
-- Visual CMS editor (`/editor`) with:
-  - Preview (editor-only, not saved)
-  - Review (field-by-field changes)
-  - Save to DB / Discard changes
-  - Per-block collapse / delete controls
-- Fast page creation from the editor (`+ New Page`)
-- Dynamic block system:
-  - `farm` blocks
-  - `text` blocks
-  - `image` blocks
-  - `heading` blocks
-  - `divider / bar` blocks
-- Layout controls per block:
-  - row group, width, order, colors, image scale, image horizontal position, image roundness, caption
-- Image workflow:
-  - upload from local computer (not URL-only)
-  - URL input still supported
-- User authentication and session-based access
-- User management page (`/users`)
-- Bilingual support (`he` / `en`)
-- Full-page translation action (`Translate HE -> EN`) via external API
-- Secure password storage (hashed)
+- Public pages:
+  - Homepage (`/`)
+  - Projects page (`/projects`)
+  - Team page (`/team`)
+- Admin/CMS pages:
+  - Main editor (`/editor`)
+  - Team editor (`/editor/team`)
+  - Projects editor (`/editor/projects`)
+  - Contact inquiries viewer (`/editor/contacts`)
+  - User management (`/users`)
+- API endpoints:
+  - `POST /api/contact`
+  - `POST /api/upload-image`
+  - `GET /api/items`
+- MySQL-backed content for homepage, team members, projects, and inquiries
+- Session-based authentication with admin-only access control
+- Legacy user password hash compatibility, with automatic upgrade on successful login
 
 ---
 
 ## Tech Stack
 
-- Python (Flask)
-- MySQL (`mysql-connector-python`)
-- Jinja2 templates
+- PHP 8.4
+- Laravel 13
+- MySQL
+- Blade templates
 - Vanilla JavaScript + CSS
-- Werkzeug security utilities
 
 ---
 
@@ -48,21 +42,22 @@ The system includes a public site, secure login, user management, and a visual C
 
 ```text
 .
-|-- app.py
-|-- db.py
-|-- requirements.txt
-|-- .env.example
+|-- php-backend/
+|   |-- app/
+|   |-- bootstrap/
+|   |-- config/
+|   |-- resources/views/
+|   |-- routes/
+|   |-- tests/
+|   `-- ...
 |-- sql/
 |   `-- setup_site_content.sql
 |-- static/
 |   |-- app.js
 |   |-- styles.css
 |   `-- ...
-`-- templates/
-    |-- index.html
-    |-- editor.html
-    |-- login.html
-    `-- users.html
+|-- php.ini
+`-- composer.phar
 ```
 
 ---
@@ -72,90 +67,79 @@ The system includes a public site, secure login, user management, and a visual C
 ### 1) Install dependencies
 
 ```bash
-pip install -r requirements.txt
+cd php-backend
+composer install
+```
+
+If `composer` is not installed globally on Windows, you can use the local bootstrap:
+
+```bash
+cd php-backend
+php -c ..\php.ini ..\composer.phar install
 ```
 
 ### 2) Configure environment
 
-Create `.env` from `.env.example` and set your values:
+Use `php-backend/.env.example` as the base for `php-backend/.env`, then set your MySQL connection:
 
 ```env
+APP_URL=http://127.0.0.1:8000
+APP_LOCALE=he
+
+DB_CONNECTION=mysql
 DB_HOST=...
 DB_PORT=25060
-DB_USER=...
+DB_DATABASE=defaultdb
+DB_USERNAME=...
 DB_PASSWORD=...
-DB_NAME=defaultdb
-FLASK_PORT=5500
-FLASK_SECRET_KEY=replace_with_strong_secret
 
-# Translation API (OpenAI-compatible endpoint)
-TRANSLATE_API_URL=
-TRANSLATE_API_KEY=
-TRANSLATE_API_MODEL=gpt-4o-mini
-
-# Optional default admin bootstrap
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin123
+SESSION_DRIVER=file
+SESSION_LIFETIME=720
 ```
 
-### 3) Run the app
+### 3) Generate the application key
 
 ```bash
-python app.py
+cd php-backend
+php artisan key:generate
+```
+
+### 4) Run the app
+
+```bash
+cd php-backend
+php artisan serve --host=127.0.0.1 --port=8000
 ```
 
 Open:
-- Home: `http://127.0.0.1:5500/`
-- Login: `http://127.0.0.1:5500/login`
-- Users: `http://127.0.0.1:5500/users`
-- Editor: `http://127.0.0.1:5500/editor`
+- Home: `http://127.0.0.1:8000/`
+- Projects: `http://127.0.0.1:8000/projects`
+- Team: `http://127.0.0.1:8000/team`
+- Login: `http://127.0.0.1:8000/login`
+- Users: `http://127.0.0.1:8000/users`
+- Editor: `http://127.0.0.1:8000/editor`
+- Team Editor: `http://127.0.0.1:8000/editor/team`
+- Projects Editor: `http://127.0.0.1:8000/editor/projects`
+- Contact Inquiries: `http://127.0.0.1:8000/editor/contacts`
 
 ---
 
-## CMS Workflow
+## Testing
 
-1. Edit content/blocks in `/editor`
-2. Click **Preview (Editor only)** to see visual changes without DB save
-3. Click **Review** to inspect exact before/after field changes (field-level diff)
-4. Choose:
-   - **Save DB** (publish to DB / official site)
-   - **Discard Changes** (reset unsaved edits)
-
-Optional editor actions:
-- **Translate HE -> EN (Full Page)** to sync all text/blocks into English
-- **+ New Page** to create a new page namespace and start editing its content
-
----
-
-## Translation Flow
-
-The editor supports full-page translation from Hebrew to English:
-
-- Button: **Translate HE -> EN (Full Page)**
-- Translates:
-  - page sections (`site_content`)
-  - dynamic blocks (`farm_cards`)
-
-If API values are missing, translation falls back to original text.
+```bash
+cd php-backend
+vendor/phpunit/phpunit/phpunit --configuration phpunit.xml
+```
 
 ---
 
 ## Security Notes
 
-- `.env` is ignored via `.gitignore`
+- `.env` files are ignored via `.gitignore`
 - Never commit secrets or API keys
 - Passwords are stored as hashes
-- Change default admin credentials in production
-- Use HTTPS and secure session settings for production deployments
-
----
-
-## Git Safety
-
-Before pushing:
-- verify `.env` is not tracked
-- rotate any credentials that were ever exposed
-- keep only `.env.example` in repository
+- Existing legacy `scrypt` hashes are supported during migration
+- Use HTTPS and secure session settings in production
 
 ---
 
