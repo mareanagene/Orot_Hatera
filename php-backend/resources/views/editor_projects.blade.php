@@ -15,7 +15,7 @@
         </div>
         <div class="header-actions">
           <a class="lang-toggle" href="{{ route('editor') }}">CMS Editor</a>
-          <a class="lang-toggle" href="{{ route('editor.ceo') }}">דבר המייסד</a>
+          <a class="lang-toggle" href="{{ route('editor.ceo') }}">דבר המייסד והמנכ"ל</a>
           <a class="lang-toggle" href="{{ route('editor.contacts') }}">פניות צור קשר</a>
           <a class="lang-toggle" href="{{ route('editor.team') }}">עץ ארגון</a>
           <a class="lang-toggle" href="{{ route('projects') }}">צפייה בדף ציבורי</a>
@@ -36,7 +36,7 @@
             <button type="submit">טען</button>
           </form>
 
-          <form method="post" id="projects-editor-form">
+          <form method="post" id="projects-editor-form" data-confirm-save>
             @csrf
             <input type="hidden" name="page_name" value="{{ $page_name }}" />
             <input type="hidden" name="projects_count" id="projects_count" value="{{ count($projects) }}" />
@@ -262,5 +262,6 @@
         });
       })();
     </script>
+    @include('partials.editor_save_overlay')
   </body>
 </html>

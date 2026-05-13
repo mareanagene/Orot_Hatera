@@ -91,7 +91,7 @@
         </div>
         <div class="header-actions">
           <a class="lang-toggle" href="{{ route('editor.contacts') }}">פניות צור קשר</a>
-          <a class="lang-toggle" href="{{ route('editor.ceo') }}">דבר המייסד</a>
+          <a class="lang-toggle" href="{{ route('editor.ceo') }}">דבר המייסד והמנכ"ל</a>
           <a class="lang-toggle" href="{{ route('editor.projects') }}">פרויקטים</a>
           <a class="lang-toggle" href="{{ route('editor.team') }}">עץ ארגון</a>
           <a class="lang-toggle" href="{{ route('index') }}">דף הבית</a>
@@ -213,7 +213,7 @@
         </section>
 
         <section class="panel panel-live" style="min-height: auto;">
-          <form method="post" class="live-form" id="editor-form">
+          <form method="post" class="live-form" id="editor-form" data-confirm-save>
             @csrf
             <input type="hidden" name="cards_count" id="cards_count" value="{{ count($farm_cards) }}" />
 
@@ -226,7 +226,7 @@
             </datalist>
 
             <label for="brand_title">brand_title</label>
-            <input id="brand_title" name="brand_title" value="{{ $content['brand_title'] ?? '' }}" />
+            <input id="brand_title" name="brand_title" value="{{ \App\Support\LegacyCms::DEFAULT_BRAND_TITLE }}" readonly />
             <label for="brand_tagline">brand_tagline</label>
             <input id="brand_tagline" name="brand_tagline" value="{{ $content['brand_tagline'] ?? '' }}" />
             <label for="hero_title">hero_title</label>
@@ -878,5 +878,6 @@
         resetBtnBottom?.addEventListener("click", resetChanges);
       })();
     </script>
+    @include('partials.editor_save_overlay')
   </body>
 </html>

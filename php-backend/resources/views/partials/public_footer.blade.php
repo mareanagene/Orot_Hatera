@@ -7,7 +7,7 @@
       <span>{{ $content['brand_tagline'] ?? '' }}</span>
     </div>
     <p class="pub-footer-copy">
-      תאורה חכמה ואמינה לדרכים ולתשתיות — אורות הטירב ביצוע 1998 בע&quot;מ.
+      תאורה חכמה ואמינה לדרכים ולתשתיות — אורות הטירה ביצוע 1998 בע&quot;מ.
     </p>
     <div class="pub-footer-extra">
       <div class="pub-footer-contact">
@@ -29,3 +29,4 @@
     @endif
   </div>
 </footer>
+<script src="/static/public-site.js" defer></script>

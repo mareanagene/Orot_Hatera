@@ -9,6 +9,7 @@ use function Vinsaj9\Crypto\Scrypt\scrypt;
 
 class LegacyCms
 {
+    public const DEFAULT_BRAND_TITLE = 'אורות הטירה ביצוע 1998 בע"מ';
     public const DEFAULT_HERO_IMAGE_URL = 'https://d3m9l0v76dty0.cloudfront.net/system/photos/12981922/original/4ff5da7517599bc31bc3f8880056e880.jpg';
     public const DEFAULT_CARD_BG_COLOR = '#eef1f6';
     public const DEFAULT_CARD_TEXT_COLOR = '#1f2937';
@@ -100,6 +101,13 @@ class LegacyCms
             'ceo_story' => '',
             'ceo_vision' => '',
             'ceo_highlights' => '',
+            'ceo_current_name' => '',
+            'ceo_current_role' => '',
+            'ceo_current_quote' => '',
+            'ceo_current_story' => '',
+            'ceo_current_vision' => '',
+            'ceo_current_image' => '',
+            'ceo_gallery' => '',
             'contact_title' => '',
             'contact_name_placeholder' => '',
             'contact_company_placeholder' => '',
@@ -161,6 +169,8 @@ class LegacyCms
         if (trim((string) ($content['recent_projects_body'] ?? '')) === '') {
             $content['recent_projects_body'] = (string) ($content['projects_title_body'] ?? '');
         }
+
+        $content['brand_title'] = self::DEFAULT_BRAND_TITLE;
 
         return $content;
     }

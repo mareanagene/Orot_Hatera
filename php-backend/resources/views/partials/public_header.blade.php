@@ -7,11 +7,18 @@
         <span class="brand-title">{{ $content['brand_title'] ?? '' }}</span>
         <span class="brand-tag">{{ $content['brand_tagline'] ?? '' }}</span>
       </span>
+      <img
+        class="brand-badge"
+        src="https://www.bdicoface.co.il/wp-content/uploads/2026/01/eitanut-iskit_2026_animated_resized-285x300.gif"
+        alt='אות "איתנות עסקית" CofaceBDI לשנת 2026'
+        loading="lazy"
+        decoding="async"
+      />
     </a>
   </div>
   <nav class="site-nav" aria-label="ניווט ראשי">
     <a class="nav-link{{ $currentPage === 'home' ? ' nav-link--current' : '' }}" href="{{ route('index') }}" @if($currentPage === 'home') aria-current="page" @endif>בית</a>
-    <a class="nav-link{{ $currentPage === 'founder' ? ' nav-link--current' : '' }}" href="{{ route('ceo.message') }}" @if($currentPage === 'founder') aria-current="page" @endif>דבר המייסד</a>
+    <a class="nav-link{{ $currentPage === 'founder' ? ' nav-link--current' : '' }}" href="{{ route('ceo.message') }}" @if($currentPage === 'founder') aria-current="page" @endif>דבר המייסד והמנכ"ל</a>
     @if($showContentLink)
     <a class="nav-link" href="#content">תוכן</a>
     @endif
@@ -30,7 +37,7 @@
         @if($current_user)
         <p class="profile-status">מחובר: {{ $current_user['username'] }}</p>
         <a class="profile-link" href="{{ route('editor') }}">עורך האתר</a>
-        <a class="profile-link" href="{{ route('editor.ceo') }}">דבר המייסד</a>
+        <a class="profile-link" href="{{ route('editor.ceo') }}">דבר המייסד והמנכ"ל</a>
         <a class="profile-link" href="{{ route('editor.projects') }}">פרויקטים</a>
         <a class="profile-link" href="{{ route('editor.team') }}">עץ ארגון</a>
         <a class="profile-link" href="{{ route('editor.contacts') }}">פניות צור קשר</a>

@@ -115,7 +115,7 @@ class AdminController extends Controller
 
         if ($request->isMethod('post')) {
             $this->saveCeoMessagePage($request);
-            $message = 'דף המייסד נשמר.';
+            $message = 'דף המייסד והמנכ"ל נשמר.';
         }
 
         return view('editor_ceo_message', [
@@ -190,7 +190,7 @@ class AdminController extends Controller
             $pageName,
             'he',
             'brand_title',
-            trim((string) $request->input('brand_title', '')),
+            LegacyCms::DEFAULT_BRAND_TITLE,
             null,
             null
         );
@@ -267,7 +267,7 @@ class AdminController extends Controller
             'ceo_story',
             'he',
             'page_title',
-            trim((string) $request->input('page_title', 'דבר המייסד')),
+            trim((string) $request->input('page_title', 'דבר המייסד והמנכ"ל')),
             null,
             null
         );
@@ -342,6 +342,62 @@ class AdminController extends Controller
             '',
             null,
             trim((string) $request->input('ceo_image', ''))
+        );
+        LegacyCms::upsertSiteContentRow(
+            'ceo_story',
+            'he',
+            'ceo_current_name',
+            trim((string) $request->input('ceo_current_name', '')),
+            null,
+            null
+        );
+        LegacyCms::upsertSiteContentRow(
+            'ceo_story',
+            'he',
+            'ceo_current_role',
+            trim((string) $request->input('ceo_current_role', '')),
+            null,
+            null
+        );
+        LegacyCms::upsertSiteContentRow(
+            'ceo_story',
+            'he',
+            'ceo_current_quote',
+            trim((string) $request->input('ceo_current_quote', '')),
+            null,
+            null
+        );
+        LegacyCms::upsertSiteContentRow(
+            'ceo_story',
+            'he',
+            'ceo_current_story',
+            '',
+            trim((string) $request->input('ceo_current_story', '')),
+            null
+        );
+        LegacyCms::upsertSiteContentRow(
+            'ceo_story',
+            'he',
+            'ceo_current_vision',
+            '',
+            trim((string) $request->input('ceo_current_vision', '')),
+            null
+        );
+        LegacyCms::upsertSiteContentRow(
+            'ceo_story',
+            'he',
+            'ceo_current_image',
+            '',
+            null,
+            trim((string) $request->input('ceo_current_image', ''))
+        );
+        LegacyCms::upsertSiteContentRow(
+            'ceo_story',
+            'he',
+            'ceo_gallery',
+            '',
+            trim((string) $request->input('ceo_gallery', '')),
+            null
         );
     }
 }

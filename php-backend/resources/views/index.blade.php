@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="אורות הטירב ביצוע 1998 בע&quot;מ — תאורת כבישים ותשתיות." />
-    <title>{{ $content['brand_title'] ?? 'אורות הטירב ביצוע 1998 בע"מ' }}</title>
+    <meta name="description" content="אורות הטירה ביצוע 1998 בע&quot;מ — תאורת כבישים ותשתיות." />
+    <title>{{ $content['brand_title'] ?? 'אורות הטירה ביצוע 1998 בע"מ' }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

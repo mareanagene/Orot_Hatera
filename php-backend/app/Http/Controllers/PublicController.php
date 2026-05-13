@@ -67,8 +67,55 @@ class PublicController extends Controller
 
         return view('ceo_message', [
             'content' => $content,
+            'ceo_gallery_items' => $this->ceoGalleryItems($content),
             'current_user' => LegacyCms::currentUser($request),
         ]);
+    }
+
+    private function ceoGalleryItems(array $content): array
+    {
+        $items = [];
+        $raw = (string) ($content['ceo_gallery_body'] ?? $content['ceo_gallery'] ?? '');
+
+        foreach (preg_split('/\r\n|\r|\n/', $raw) ?: [] as $line) {
+            $line = trim($line);
+            if ($line === '') {
+                continue;
+            }
+
+            [$imageUrl, $caption] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+            if ($imageUrl === '') {
+                continue;
+            }
+
+            $items[] = [
+                'image_url' => $imageUrl,
+                'caption' => $caption !== '' ? $caption : 'עוד רגע של עשייה והמשכיות.',
+            ];
+        }
+
+        if (!empty($items)) {
+            return $items;
+        }
+
+        $fallbacks = [
+            [
+                'image_url' => trim((string) ($content['ceo_image_image_url'] ?? '')),
+                'caption' => 'המייסד שהניח את היסודות לערכי המקצועיות, האחריות והאמינות.',
+            ],
+            [
+                'image_url' => trim((string) ($content['ceo_current_image_image_url'] ?? '')),
+                'caption' => 'הדור הבא ממשיך את הדרך ומוביל את החברה קדימה.',
+            ],
+        ];
+
+        foreach ($fallbacks as $item) {
+            if ($item['image_url'] !== '') {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
     }
 
     public function loginForm(Request $request)

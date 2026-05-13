@@ -1,0 +1,44 @@
+אתר אורות הטירה — מה יש בתיקייה ומה להריץ
+============================================
+
+מה כבר בתיקיית php-backend (אחרי ההורדה מהמפתח)
+-----------------------------------------------
+• composer.phar — מנהל החבילות של PHP (Composer), בלי להתקין Composer גלובלי.
+• קוד המקור, מיגרציות, תצוגות Blade, קבצי public/static וכו'.
+
+מה עדיין חייב להיות במחשב שלך או בשרת (לא נכנס לתיקייה)
+--------------------------------------------------------
+• PHP גרסה 8.3 ומעלה, עם הרחבות נפוצות (במיוחד pdo_sqlite אם משתמשים ב-SQLite כמו ב-.env.example).
+
+מה להריץ פעם אחת אחרי שמעתיקים את התיקייה
+------------------------------------------
+ב-Windows (PowerShell), מתוך תיקיית php-backend:
+
+    powershell -ExecutionPolicy Bypass -File .\install-portable.ps1
+
+או בלינוקס/שרת:
+
+    chmod +x install-portable.sh && ./install-portable.sh
+
+הסקריפט:
+1) מריץ composer install (יוצר את התיקייה vendor — גדולה, זה נורמלי)
+2) מעתיק .env מ-.env.example אם אין .env
+3) יוצר database/database.sqlite אם צריך
+4) מריץ php artisan key:generate ו-php artisan migrate
+
+אחרי זה — להריץ באופן מקומי:
+
+    php artisan serve
+
+ובדפדפן: http://127.0.0.1:8000
+
+העלאה לאינטרנט (שרת אמיתי)
+---------------------------
+• Document Root של האתר חייב להיות על: php-backend/public
+• ב-.env בשרת: APP_URL, APP_DEBUG=false, והגדרות DB אם עוברים ל-MySQL
+• לא לשכפל קובץ .env מהמחשב האישי אם יש בו סודות — רק תבנית + ערכים חדשים בשרת
+
+הערות
+-----
+• אם אין אינטרנט בזמן ההתקנה, צריך ש-composer.phar כבר יהיה בתיקייה (כמו כאן) ושהמחשב יוכל להוריד חבילות מ-packagist בזמן composer install.
+• Node.js לא חובה להרצת האתר הזה אם לא בונים מחדש פרונט מ-Vite; הקבצים הסטטיים כבר תחת public/static.
